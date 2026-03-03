@@ -3,17 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const navLinks = [
-  { href: '/diagnosis', label: 'Diagnosis', ja: '診断' },
-  { href: '/science', label: 'Science', ja: 'サイエンス' },
-  { href: '/marketplace', label: 'Marketplace', ja: 'マーケット' },
-  { href: '/core', label: 'CORE', ja: 'メンバー' },
+  { href: '/diagnosis',   en: 'Diagnosis',    ja: '診断' },
+  { href: '/science',     en: 'Science',      ja: 'サイエンス' },
+  { href: '/marketplace', en: 'Marketplace',  ja: 'マーケット' },
+  { href: '/core',        en: 'CORE',         ja: 'メンバー' },
 ];
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { lang, setLang } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -40,7 +42,7 @@ export default function Navigation() {
               SHIROKUMA
             </span>
             <span className="text-[#c9a96e] text-[9px] tracking-[0.3em] uppercase font-sans">
-              Longevity Science
+              {lang === 'en' ? 'Longevity Science' : '長寿科学'}
             </span>
           </div>
         </Link>
@@ -54,29 +56,67 @@ export default function Navigation() {
               className="group flex flex-col items-center gap-0.5"
             >
               <span className="text-[#1a1a18] font-sans text-sm font-medium hover:text-[#c9a96e] transition-colors">
-                {link.label}
-              </span>
-              <span className="text-[#9a9a8a] text-[9px] tracking-widest">
-                {link.ja}
+                {lang === 'en' ? link.en : link.ja}
               </span>
             </Link>
           ))}
+
+          {/* Language Toggle */}
+          <div className="flex items-center border border-[#1a1a18]/20 rounded-full overflow-hidden text-xs font-sans">
+            <button
+              onClick={() => setLang('en')}
+              className={`px-3 py-1.5 transition-all ${
+                lang === 'en'
+                  ? 'bg-[#1a1a18] text-[#fafaf8]'
+                  : 'text-[#1a1a18]/60 hover:text-[#1a1a18]'
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLang('ja')}
+              className={`px-3 py-1.5 transition-all ${
+                lang === 'ja'
+                  ? 'bg-[#1a1a18] text-[#fafaf8]'
+                  : 'text-[#1a1a18]/60 hover:text-[#1a1a18]'
+              }`}
+            >
+              JP
+            </button>
+          </div>
+
           <Link
             href="/diagnosis"
             className="bg-[#1a1a18] text-[#fafaf8] px-6 py-2.5 rounded-full text-sm font-sans font-medium hover:bg-[#c9a96e] transition-all duration-300"
           >
-            Start Free Diagnosis →
+            {lang === 'en' ? 'Start Free Diagnosis →' : '無料診断を始める →'}
           </Link>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        {/* Mobile: Language Toggle + Hamburger */}
+        <div className="md:hidden flex items-center gap-3">
+          <div className="flex items-center border border-[#1a1a18]/20 rounded-full overflow-hidden text-xs font-sans">
+            <button
+              onClick={() => setLang('en')}
+              className={`px-2.5 py-1 transition-all ${lang === 'en' ? 'bg-[#1a1a18] text-[#fafaf8]' : 'text-[#1a1a18]/60'}`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLang('ja')}
+              className={`px-2.5 py-1 transition-all ${lang === 'ja' ? 'bg-[#1a1a18] text-[#fafaf8]' : 'text-[#1a1a18]/60'}`}
+            >
+              JP
+            </button>
+          </div>
+          <button
+            className="p-2"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -89,8 +129,7 @@ export default function Navigation() {
               className="flex justify-between items-center py-2 border-b border-[#e8d5b7]/30"
               onClick={() => setIsOpen(false)}
             >
-              <span className="font-sans font-medium">{link.label}</span>
-              <span className="text-[#9a9a8a] text-xs">{link.ja}</span>
+              <span className="font-sans font-medium">{lang === 'en' ? link.en : link.ja}</span>
             </Link>
           ))}
           <Link
@@ -98,7 +137,7 @@ export default function Navigation() {
             className="bg-[#1a1a18] text-[#fafaf8] px-6 py-3 rounded-full text-center font-sans font-medium mt-2"
             onClick={() => setIsOpen(false)}
           >
-            Start Free Diagnosis →
+            {lang === 'en' ? 'Start Free Diagnosis →' : '無料診断を始める →'}
           </Link>
         </div>
       )}
