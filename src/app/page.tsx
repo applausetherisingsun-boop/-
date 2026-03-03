@@ -254,6 +254,162 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Author / Physician Credibility Section */}
+      <section className="py-28 px-6 bg-[#fafaf8]">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            {/* Portrait placeholder */}
+            <div className="flex justify-center md:justify-end order-2 md:order-1">
+              <div className="relative w-72 h-72 md:w-80 md:h-80">
+                {/* Decorative rings */}
+                <div className="absolute inset-0 rounded-full border-2 border-[#c9a96e]/20 scale-110"></div>
+                <div className="absolute inset-0 rounded-full border border-[#7a9e7e]/15 scale-125"></div>
+                {/* Avatar */}
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-[#e8d5b7] to-[#c9a96e]/30 flex items-center justify-center overflow-hidden">
+                  <div className="text-center">
+                    <div className="text-7xl mb-2">🐻‍❄️</div>
+                    <span className="text-[#1a1a18]/40 text-xs font-sans tracking-widest uppercase">SHIROKUMA</span>
+                  </div>
+                </div>
+                {/* Credential badge */}
+                <div className="absolute -bottom-4 -right-4 bg-[#1a1a18] text-white rounded-2xl px-4 py-3 shadow-xl">
+                  <p className="text-[#c9a96e] text-[9px] font-sans tracking-widest uppercase">Active Physician</p>
+                  <p className="text-white text-xs font-bold font-sans mt-0.5">放射線科医</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bio text */}
+            <div className="order-1 md:order-2">
+              <p className="text-[#c9a96e] text-xs font-sans tracking-[0.4em] uppercase mb-4">About the Author</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-[#1a1a18] leading-tight mb-6">
+                Written by a doctor<br />
+                <span
+                  style={{
+                    background: 'linear-gradient(135deg, #c9a96e 0%, #7a9e7e 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  who lives the science.
+                </span>
+              </h2>
+              <p className="text-[#5a5a4a] text-base leading-relaxed mb-6 font-sans">
+                NISHI is a practicing radiologist and evidence-based longevity researcher based in Japan.
+                At 36, he maintains 9.7% body fat with 5 years of structured training — not because of
+                genetics, but because of a meticulously science-tested protocol rooted in evolutionary medicine
+                and Japanese cultural practice.
+              </p>
+              <p className="text-[#5a5a4a] text-base leading-relaxed mb-8 font-sans">
+                His mission: to be the first Japanese physician to scientifically decode <em>why Japan
+                is the world&apos;s longest-lived nation</em> — and deliver that knowledge to a global audience.
+              </p>
+
+              {/* Stats row */}
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { value: '36', unit: 'yrs', label: 'Age · Body fat 9.7%' },
+                  { value: '5+', unit: 'yrs', label: 'Training & research' },
+                  { value: '100+', unit: 'refs', label: 'Peer-reviewed sources' },
+                ].map((s) => (
+                  <div key={s.label} className="bg-[#f5f0e8] rounded-xl p-3 text-center">
+                    <p className="text-[#1a1a18] font-bold text-xl">
+                      {s.value}<span className="text-[#c9a96e] text-sm ml-0.5">{s.unit}</span>
+                    </p>
+                    <p className="text-[#9a9a8a] text-[10px] font-sans leading-tight mt-1">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Book Preview Section */}
+      <section className="py-28 px-6 bg-[#1a1a18] overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            {/* Book mockup */}
+            <div className="flex justify-center">
+              <div className="relative">
+                {/* Glow */}
+                <div className="absolute inset-0 bg-[#c9a96e]/20 blur-3xl scale-110"></div>
+                {/* Book cover */}
+                <div className="relative w-56 md:w-64 rounded-lg overflow-hidden shadow-2xl"
+                  style={{ background: 'linear-gradient(160deg, #1a1a18 0%, #2a2015 50%, #1a1a18 100%)', border: '1px solid #c9a96e40' }}>
+                  {/* Spine accent */}
+                  <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-[#c9a96e] to-[#7a9e7e]"></div>
+                  <div className="pl-6 pr-5 pt-10 pb-8">
+                    {/* Top badge */}
+                    <div className="inline-block border border-[#c9a96e]/50 text-[#c9a96e] text-[8px] font-sans tracking-[0.3em] uppercase px-2 py-1 rounded mb-6">
+                      Coming 2026
+                    </div>
+                    {/* Title */}
+                    <h3 className="text-white font-bold text-xl leading-snug mb-2">
+                      Aging Is a<br />Civilization<br />Disease
+                    </h3>
+                    {/* Subtitle */}
+                    <p className="text-[#c9a96e] text-[10px] font-sans leading-relaxed mb-6">
+                      The SHIROKUMA<br />6-Axis Anti-Aging<br />Complete Guide
+                    </p>
+                    {/* Divider */}
+                    <div className="w-8 h-px bg-[#c9a96e]/40 mb-4"></div>
+                    {/* Author */}
+                    <p className="text-[#8a8a7a] text-[9px] font-sans tracking-widest uppercase">NISHI · SHIROKUMA</p>
+                    <p className="text-[#6a6a5a] text-[8px] font-sans mt-1">M.D., Radiologist</p>
+                    {/* Bear icon */}
+                    <div className="mt-6 text-3xl opacity-20">🐻‍❄️</div>
+                  </div>
+                </div>
+                {/* Shadow */}
+                <div className="absolute -bottom-4 left-4 right-4 h-8 bg-black/40 blur-md rounded-full"></div>
+              </div>
+            </div>
+
+            {/* Book info */}
+            <div>
+              <p className="text-[#c9a96e] text-xs font-sans tracking-[0.4em] uppercase mb-4">The Book</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-6">
+                The manifesto<br />for the<br /><span className="text-[#c9a96e]">anti-aging era.</span>
+              </h2>
+              <p className="text-[#9a9a7a] text-base leading-relaxed mb-6 font-sans">
+                <em>&quot;Aging Is a Civilization Disease&quot;</em> is the first book by a Japanese physician
+                to scientifically decode why Japan leads global longevity — using evolutionary medicine,
+                inflammaging research, and gut microbiome science.
+              </p>
+              <p className="text-[#9a9a7a] text-base leading-relaxed mb-8 font-sans">
+                Seven chapters. Six axes. One complete protocol to live like a polar bear — not a salmon.
+              </p>
+              {/* Chapter list */}
+              <div className="space-y-2 mb-8">
+                {[
+                  { ch: '01', title: 'Inflammaging — The Silent Engine' },
+                  { ch: '02', title: 'The Gut Microbiome Axis' },
+                  { ch: '03', title: 'Neural & Stress Regulation' },
+                  { ch: '04', title: 'Metabolic Axis & Mitochondria' },
+                  { ch: '05', title: 'Hormonal Axis & Circadian Biology' },
+                  { ch: '06', title: 'Social Axis & Ikigai' },
+                  { ch: '07', title: 'The Japanese Integration Protocol' },
+                ].map((item) => (
+                  <div key={item.ch} className="flex items-center gap-3 py-2 border-b border-[#3a3a38]">
+                    <span className="text-[#c9a96e]/50 text-xs font-sans font-bold w-6 flex-shrink-0">{item.ch}</span>
+                    <span className="text-[#8a8a7a] text-sm font-sans">{item.title}</span>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/science"
+                className="inline-flex items-center gap-3 border border-[#c9a96e] text-[#c9a96e] px-8 py-3.5 rounded-full text-sm font-sans font-semibold hover:bg-[#c9a96e] hover:text-[#1a1a18] transition-all duration-300"
+              >
+                Preview the Science
+                <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Products Preview Section */}
       <section className="py-28 px-6 bg-[#f5f0e8]">
         <div className="max-w-7xl mx-auto">
