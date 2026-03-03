@@ -29,6 +29,7 @@ export default function Footer() {
                 { href: '/diagnosis', label: 'Free Diagnosis' },
                 { href: '/science', label: 'Science Library' },
                 { href: '/marketplace', label: 'Marketplace' },
+                { href: '/investment', label: 'Investment Strategy' },
                 { href: '/core', label: 'CORE Membership' },
               ].map(({ href, label }) => (
                 <li key={href}>
