@@ -2,19 +2,27 @@
 /**
  * SHIROKUMA Shorts — One-Command Production Pipeline
  *
- *  ① Claude API  → 台本・データ生成
- *  ② OpenAI TTS  → ナレーション音声 (MP3)
- *  ③ Remotion    → MP4レンダリング (1080×1920)
- *  ④ out/mp4/    → YouTubeにそのままアップロード可能
+ *  ① Claude API   → 台本・データ生成 (claude-sonnet-4-6)
+ *  ② OpenAI TTS   → ナレーション音声 MP3 (public/audio/)
+ *  ③ Whisper API  → 単語タイムスタンプ → カラオケ字幕同期
+ *  ④ Remotion     → MP4レンダリング 1080×1920
+ *  ⑤ YouTube API  → Shorts 自動投稿 (--upload フラグ時)
  *
  * Usage:
  *   node scripts/pipeline.mjs --topic "腸内細菌と長寿"
- *   node scripts/pipeline.mjs --all          # 20本まとめて
- *   node scripts/pipeline.mjs --no-tts       # 音声なし
- *   node scripts/pipeline.mjs --no-render    # 生成のみ（レンダーなし）
+ *   node scripts/pipeline.mjs --all               # 20本まとめて
+ *   node scripts/pipeline.mjs --no-tts            # 音声なし（字幕もスキップ）
+ *   node scripts/pipeline.mjs --no-render         # 生成のみ
+ *   node scripts/pipeline.mjs --upload            # レンダー後 YouTube に自動投稿
+ *   node scripts/pipeline.mjs --upload --private  # 限定公開で投稿
+ *   node scripts/pipeline.mjs --upload --schedule "2026-03-10T09:00:00+09:00"
  *
  * Requires .env.local:
- *   OPENAI_API_KEY=sk-...           (台本生成 + TTS、これだけでOK)
+ *   ANTHROPIC_API_KEY=sk-ant-...   (台本生成)
+ *   OPENAI_API_KEY=sk-...          (TTS + Whisper)
+ *   YOUTUBE_CLIENT_ID=...          (投稿時のみ)
+ *   YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
+ *   YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ)
  */
 
 import { execSync } from 'child_process';
@@ -90,12 +98,17 @@ async function generateTTS(id, transcript, voice = 'nova') {
   return `audio/${id}.mp3`;
 }
 
-function updatePropsWithAudio(id, audioFile) {
+function updateProps(id, updates) {
   const propsPath = resolve(ROOT, `out/props/${id}.json`);
   if (!existsSync(propsPath)) return;
   const props = JSON.parse(readFileSync(propsPath, 'utf8'));
-  props.audioFile = audioFile;
+  Object.assign(props, updates);
   writeFileSync(propsPath, JSON.stringify(props, null, 2), 'utf8');
+}
+
+// 後方互換: audioFile のみ更新
+function updatePropsWithAudio(id, audioFile) {
+  updateProps(id, { audioFile });
 }
 
 function renderVideo(id, propsPath) {
@@ -120,24 +133,59 @@ function renderVideo(id, propsPath) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-async function processTopic(topic, { doTTS, doRender }) {
+async function processTopic(topic, { doTTS, doRender, doUpload, uploadPrivate, scheduledAt }) {
   console.log(`\n${'═'.repeat(60)}`);
   console.log(`📽  ${topic}`);
 
-  // ① Generate
+  // ① 台本生成 (Claude API)
   const { generateVideo, saveProps } = await import('./generate-video.mjs');
   const { data, propsPath } = await generateVideo(topic);
 
-  // ② TTS
+  // ② TTS (OpenAI → public/audio/)
   let audioFile = null;
   if (doTTS && data.transcript) {
     audioFile = await generateTTS(data.id, data.transcript);
     if (audioFile) updatePropsWithAudio(data.id, audioFile);
   }
 
-  // ③ Render
+  // ③ Whisper カラオケ字幕生成
+  if (doTTS && audioFile) {
+    const audioPath = resolve(ROOT, `public/${audioFile}`);
+    if (existsSync(audioPath)) {
+      try {
+        const { generateCaptions, saveCaptionsToProps } = await import('./generate-captions.mjs');
+        const captions = await generateCaptions(audioPath);
+        saveCaptionsToProps(data.id, captions);
+        console.log(`🎤 Captions: ${captions.length} words synced`);
+      } catch (e) {
+        console.warn(`⚠️  Captions skipped: ${e.message}`);
+      }
+    }
+  }
+
+  // ④ Remotion レンダリング
+  let mp4Path = null;
   if (doRender) {
-    renderVideo(data.id, propsPath);
+    mp4Path = renderVideo(data.id, propsPath);
+  }
+
+  // ⑤ YouTube 投稿
+  if (doUpload && mp4Path) {
+    try {
+      const { uploadToYouTube } = await import('./upload-youtube.mjs');
+      const props = JSON.parse(readFileSync(propsPath, 'utf8'));
+      const { videoId, url } = await uploadToYouTube({
+        videoPath: mp4Path,
+        title: props.title,
+        description: props.description,
+        tags: props.tags ?? [],
+        privacyStatus: uploadPrivate ? 'private' : 'public',
+        scheduledAt: scheduledAt ?? null,
+      });
+      updateProps(data.id, { youtubeId: videoId, youtubeUrl: url });
+    } catch (e) {
+      console.error(`❌ YouTube upload failed: ${e.message}`);
+    }
   }
 
   return data.id;
@@ -145,25 +193,38 @@ async function processTopic(topic, { doTTS, doRender }) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const topicIdx = args.findIndex((a) => a === '--topic');
-  const doAll    = args.includes('--all');
-  const noTTS    = args.includes('--no-tts');
-  const noRender = args.includes('--no-render');
+  const topicIdx    = args.findIndex((a) => a === '--topic');
+  const doAll       = args.includes('--all');
+  const noTTS       = args.includes('--no-tts');
+  const noRender    = args.includes('--no-render');
+  const doUpload    = args.includes('--upload');
+  const uploadPrivate = args.includes('--private');
+  const schedIdx    = args.findIndex((a) => a === '--schedule');
+  const scheduledAt = schedIdx !== -1 ? args[schedIdx + 1] : null;
 
   if (!doAll && topicIdx === -1) {
     console.log(`
 SHIROKUMA Shorts Pipeline
-══════════════════════════
-  node scripts/pipeline.mjs --topic "トピック"   1本生成
-  node scripts/pipeline.mjs --all               20本まとめて
-  node scripts/pipeline.mjs --all --no-tts      音声なし
-  node scripts/pipeline.mjs --all --no-render   データのみ
+══════════════════════════════════════════════════════════════
+  node scripts/pipeline.mjs --topic "トピック"           1本生成
+  node scripts/pipeline.mjs --all                       20本まとめて
+  node scripts/pipeline.mjs --all --no-tts              音声・字幕なし
+  node scripts/pipeline.mjs --all --no-render           データのみ
+  node scripts/pipeline.mjs --topic "..." --upload      生成後 YouTube 投稿
+  node scripts/pipeline.mjs --topic "..." --upload --private
+  node scripts/pipeline.mjs --topic "..." --upload --schedule "2026-03-10T09:00:00+09:00"
 
 必要な環境変数 (.env.local):
-  ANTHROPIC_API_KEY=sk-ant-...   (台本生成)
-  OPENAI_API_KEY=sk-...          (音声生成、省略可)
+  ANTHROPIC_API_KEY=sk-ant-...   (台本生成 ← Claude API)
+  OPENAI_API_KEY=sk-...          (TTS + Whisper字幕)
+  YOUTUBE_CLIENT_ID=...          (投稿時のみ)
+  YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
+  YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ → --auth で取得)
 
-出力: out/mp4/shorts-{id}.mp4 → YouTubeにそのままアップ可
+初回 YouTube 認可:
+  node scripts/upload-youtube.mjs --auth
+
+出力: out/mp4/shorts-{id}.mp4 → YouTube Shorts / TikTok / Reels
     `);
     process.exit(0);
   }
@@ -173,10 +234,16 @@ SHIROKUMA Shorts Pipeline
     ? TOPIC_SEEDS
     : [args[topicIdx + 1]];
 
-  const opts = { doTTS: !noTTS, doRender: !noRender };
+  const opts = {
+    doTTS:    !noTTS,
+    doRender: !noRender,
+    doUpload,
+    uploadPrivate,
+    scheduledAt,
+  };
 
   console.log(`\n🚀 SHIROKUMA Shorts Pipeline`);
-  console.log(`   Topics: ${topics.length} | TTS: ${opts.doTTS} | Render: ${opts.doRender}\n`);
+  console.log(`   Topics: ${topics.length} | TTS: ${opts.doTTS} | Render: ${opts.doRender} | Upload: ${opts.doUpload}\n`);
 
   mkdirSync(resolve(ROOT, 'out/mp4'), { recursive: true });
   mkdirSync(resolve(ROOT, 'out/props'), { recursive: true });
@@ -200,7 +267,9 @@ SHIROKUMA Shorts Pipeline
   console.log(`✅ Success: ${results.filter((r) => r.ok).length}/${results.length}`);
   if (opts.doRender) {
     console.log(`📁 MP4 files: out/mp4/`);
-    console.log(`📤 Ready to upload to YouTube Shorts / TikTok / Instagram Reels`);
+    if (!opts.doUpload) {
+      console.log(`📤 YouTube投稿するには --upload フラグを追加してください`);
+    }
   }
 }
 

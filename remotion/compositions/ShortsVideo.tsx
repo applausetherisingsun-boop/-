@@ -11,6 +11,8 @@ import {
 } from 'remotion';
 import { axisConfig, type AxisId } from '../../src/lib/videos';
 
+export type Caption = { word: string; start: number; end: number };
+
 export type ShortsVideoProps = {
   title: string;
   titleJa: string;
@@ -20,7 +22,8 @@ export type ShortsVideoProps = {
   tags: string[];
   points: Array<{ icon: string; text: string }>;
   transcript?: string;
-  audioFile?: string; // e.g. "audio/natto-nattokinase.mp3" (relative to public/)
+  audioFile?: string;   // e.g. "audio/natto-nattokinase.mp3" (relative to public/)
+  captions?: Caption[]; // Whisper word timestamps → カラオケ同期
 };
 
 const FPS = 30;
@@ -310,9 +313,88 @@ function OutroScene({ axisColor, tags }: { axisColor: string; tags: string[] }) 
   );
 }
 
+// ── Karaoke Overlay (全シーンに重なる字幕、Whisperタイムスタンプが必要) ────────
+function KaraokeOverlay({ captions, axisColor }: { captions: Caption[]; axisColor: string }) {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const audioTime = frame / fps;
+
+  // 現在再生中の単語インデックスを検索
+  const activeIdx = (() => {
+    for (let i = captions.length - 1; i >= 0; i--) {
+      if (audioTime >= captions[i].start) return i;
+    }
+    return -1;
+  })();
+
+  // 音声が始まっていないか終了後は非表示
+  if (activeIdx === -1 || audioTime > (captions[captions.length - 1]?.end ?? 0) + 0.5) {
+    return null;
+  }
+
+  // 4単語1ラインで区切り、現在のラインを表示
+  const LINE_SIZE = 4;
+  const lineStart = Math.floor(activeIdx / LINE_SIZE) * LINE_SIZE;
+  const lineWords = captions.slice(lineStart, lineStart + LINE_SIZE);
+
+  // ライン切り替わり時のフェード
+  const firstWordStart = captions[lineStart]?.start ?? 0;
+  const fadeIn = interpolate(audioTime, [firstWordStart, firstWordStart + 0.15], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  });
+
+  return (
+    <AbsoluteFill style={{
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      paddingBottom: 260, pointerEvents: 'none', opacity: fadeIn,
+    }}>
+      {/* 背景ブラー帯 */}
+      <div style={{
+        position: 'absolute', bottom: 220, left: 40, right: 40,
+        height: 100, borderRadius: 20,
+        background: 'rgba(0,0,0,0.55)',
+        backdropFilter: 'blur(6px)',
+      }} />
+      {/* 単語テキスト */}
+      <div style={{ position: 'relative', textAlign: 'center', padding: '0 56px', zIndex: 1 }}>
+        {lineWords.map((c, i) => {
+          const isActive = lineStart + i === activeIdx;
+          // 発音中の単語は少し拡大
+          const wordScale = isActive
+            ? interpolate(audioTime, [c.start, c.start + 0.08], [0.95, 1.05], {
+                extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+              })
+            : 1;
+          return (
+            <span
+              key={`${lineStart}-${i}`}
+              style={{
+                display: 'inline-block',
+                fontSize: 52,
+                fontWeight: 900,
+                fontFamily: 'sans-serif',
+                marginRight: '0.22em',
+                color: isActive ? axisColor : 'rgba(255,255,255,0.75)',
+                textShadow: isActive
+                  ? `0 0 24px ${axisColor}80, 0 2px 8px rgba(0,0,0,0.9)`
+                  : '0 2px 8px rgba(0,0,0,0.9)',
+                transform: `scale(${wordScale})`,
+                transformOrigin: 'center bottom',
+                transition: 'color 0.08s ease, text-shadow 0.08s ease',
+              }}
+            >
+              {c.word}
+            </span>
+          );
+        })}
+      </div>
+    </AbsoluteFill>
+  );
+}
+
 // ── Main composition ─────────────────────────────────────────────────────────
 export function ShortsVideo({
-  title, titleJa, description, axis, thumbnail, tags, points, transcript, audioFile,
+  title, titleJa, description, axis, thumbnail, tags, points, transcript, audioFile, captions,
 }: ShortsVideoProps) {
   const cfg = axisConfig[axis];
 
@@ -345,6 +427,11 @@ export function ShortsVideo({
         durationInFrames={OUTRO_FRAMES}>
         <OutroScene axisColor={cfg.color} tags={tags} />
       </Sequence>
+
+      {/* Whisperタイムスタンプがある場合のみ全画面カラオケ字幕を表示 */}
+      {captions && captions.length > 0 && (
+        <KaraokeOverlay captions={captions} axisColor={cfg.color} />
+      )}
     </AbsoluteFill>
   );
 }

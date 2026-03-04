@@ -16,8 +16,9 @@ export async function generateTTS({ id, transcript, voice = 'alloy' }) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error('OPENAI_API_KEY not set');
 
-  mkdirSync(resolve(ROOT, 'out/audio'), { recursive: true });
-  const outputPath = resolve(ROOT, `out/audio/${id}.mp3`);
+  // public/audio/ はRemotionのstaticFile()が参照するディレクトリ
+  mkdirSync(resolve(ROOT, 'public/audio'), { recursive: true });
+  const outputPath = resolve(ROOT, `public/audio/${id}.mp3`);
 
   console.log(`🎙 Generating TTS for: ${id} (voice: ${voice})`);
 
@@ -43,7 +44,7 @@ export async function generateTTS({ id, transcript, voice = 'alloy' }) {
   const buffer = Buffer.from(await res.arrayBuffer());
   writeFileSync(outputPath, buffer);
   console.log(`✅ Audio: ${outputPath}`);
-  return outputPath;
+  return `audio/${id}.mp3`; // staticFile() 用の相対パス
 }
 
 // CLI usage: node scripts/generate-tts.mjs --id natto-nattokinase

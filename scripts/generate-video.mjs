@@ -83,32 +83,34 @@ Gradient hex guidelines (match axis):
 - social: #c9a96e → #7a9e7e`;
 }
 
-// ── OpenAI API (GPT-4o) ───────────────────────────────────────────────────────
+// ── Claude API (Anthropic claude-sonnet-4-6) ──────────────────────────────────
 async function callClaude(topic) {
-  const key = process.env.OPENAI_API_KEY;
-  if (!key) throw new Error('OPENAI_API_KEY not set');
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new Error('ANTHROPIC_API_KEY not set in .env.local');
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${key}`,
-      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4o',
+      model: 'claude-sonnet-4-6',
       max_tokens: 2048,
-      response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: 'You are a viral science educator. Return only valid JSON.' },
         { role: 'user', content: buildPrompt(topic) },
       ],
     }),
   });
 
-  if (!res.ok) throw new Error(`OpenAI ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Claude API ${res.status}: ${await res.text()}`);
   const data = await res.json();
-  const raw = data.choices[0].message.content.trim();
-  return JSON.parse(raw);
+  const raw = data.content[0].text.trim();
+
+  // Strip markdown code fences if present
+  const jsonStr = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+  return JSON.parse(jsonStr);
 }
 
 // ── Inject into videos.ts ─────────────────────────────────────────────────────
@@ -200,6 +202,3 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   console.log('\n🏁 Done.');
 }
 
-function fileURLToPath(url) {
-  return new URL(url).pathname;
-}
