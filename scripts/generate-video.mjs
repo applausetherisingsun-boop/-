@@ -149,6 +149,13 @@ function injectVideo(v) {
 export function saveProps(v) {
   mkdirSync(resolve(ROOT, 'out/props'), { recursive: true });
   const path = resolve(ROOT, `out/props/${v.id}.json`);
+
+  // Preserve fields from previous runs (audioFile, captions) to avoid losing them on re-run
+  let existing = {};
+  if (existsSync(path)) {
+    try { existing = JSON.parse(readFileSync(path, 'utf8')); } catch {}
+  }
+
   writeFileSync(path, JSON.stringify({
     title: v.title,
     titleJa: v.titleJa,
@@ -157,12 +164,14 @@ export function saveProps(v) {
     thumbnail: v.thumbnail,
     tags: v.tags.map((t) => t.replace(/\s+/g, '')),
     transcript: v.transcript,
-    transcriptJa: v.transcriptJa ?? null, // Google Cloud TTS 用日本語台本
+    transcriptJa: v.transcriptJa ?? null,
     points: v.points ?? [
       { icon: '🔬', text: v.tags[0] ?? '' },
       { icon: '📖', text: v.tags[1] ?? '' },
       { icon: '✅', text: v.tags[2] ?? '' },
     ],
+    audioFile: existing.audioFile ?? null,
+    captions: existing.captions ?? null,
   }, null, 2), 'utf8');
   return path;
 }
