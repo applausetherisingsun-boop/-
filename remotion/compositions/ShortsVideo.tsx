@@ -445,9 +445,21 @@ export function ShortsVideo({
     <AbsoluteFill>
       <Background axisColor={cfg.color} thumbnail={thumbnail} />
 
-      {/* Optional TTS audio */}
+      {/* BGM: Snowfall — Øneheart, reidenshi (place file at public/audio/bgm/snowfall.mp3) */}
+      <Audio
+        src={staticFile('audio/bgm/snowfall.mp3')}
+        startFrom={0}
+        volume={(f) => interpolate(
+          f,
+          [0, 30, SHORTS_TOTAL_FRAMES - 60, SHORTS_TOTAL_FRAMES],
+          [0, 0.18, 0.18, 0],
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+        )}
+      />
+
+      {/* TTS narration (on top of BGM) */}
       {audioFile && (
-        <Audio src={staticFile(audioFile)} startFrom={0} />
+        <Audio src={staticFile(audioFile)} startFrom={0} volume={1} />
       )}
 
       <Sequence from={0} durationInFrames={HOOK_FRAMES}>
