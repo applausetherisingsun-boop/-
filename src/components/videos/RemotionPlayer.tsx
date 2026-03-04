@@ -25,6 +25,7 @@ export default function RemotionPlayer({ video }: Props) {
     thumbnail: video.thumbnail,
     tags: video.tags.map((t) => t.replace(/\s+/g, '')),
     points: buildPoints(video),
+    audioFile: `audio/${video.id}.mp3`,
   };
 
   return (
