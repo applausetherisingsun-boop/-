@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Heart, Share2, ChevronUp, ChevronDown, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { Heart, Share2, ChevronUp, ChevronDown, Play, Pause, Volume2, VolumeX, Info, Check } from 'lucide-react';
 import { ShortVideo, axisConfig, formatViews } from '@/lib/videos';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type ShortsCardProps = {
   video: ShortVideo;
@@ -16,13 +17,54 @@ function ShortsCard({ video, isActive, onLike, liked }: ShortsCardProps) {
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [shared, setShared] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const axis = axisConfig[video.axis];
 
+  // Parse duration string like "0:58" → seconds
+  const durationSeconds = (() => {
+    const [m, s] = video.duration.split(':').map(Number);
+    return (m || 0) * 60 + (s || 58);
+  })();
+
   useEffect(() => {
-    if (!isActive) setPlaying(false);
+    if (!isActive) {
+      setPlaying(false);
+      setProgress(0);
+    }
   }, [isActive]);
 
+  // Progress bar animation
+  useEffect(() => {
+    if (progressRef.current) clearInterval(progressRef.current);
+    if (playing) {
+      const tick = 200; // ms
+      progressRef.current = setInterval(() => {
+        setProgress((p) => {
+          if (p >= 100) { clearInterval(progressRef.current!); setPlaying(false); return 0; }
+          return p + (tick / (durationSeconds * 1000)) * 100;
+        });
+      }, tick);
+    }
+    return () => { if (progressRef.current) clearInterval(progressRef.current); };
+  }, [playing, durationSeconds]);
+
   const togglePlay = () => setPlaying((p) => !p);
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/videos/${video.id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: video.title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
+      setShared(true);
+      setTimeout(() => setShared(false), 2000);
+    } catch {}
+  };
 
   return (
     <div className="relative w-full h-full flex items-center justify-center bg-black select-none">
@@ -67,6 +109,14 @@ function ShortsCard({ video, isActive, onLike, liked }: ShortsCardProps) {
 
         {/* Dark gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/30 pointer-events-none" />
+
+        {/* Progress bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10 z-10">
+          <div
+            className="h-full bg-[#c9a96e] transition-none"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
 
         {/* Play/Pause indicator */}
         {!playing && (
@@ -155,12 +205,27 @@ function ShortsCard({ video, isActive, onLike, liked }: ShortsCardProps) {
         </button>
 
         {/* Share */}
-        <button className="flex flex-col items-center gap-1">
+        <button className="flex flex-col items-center gap-1" onClick={handleShare}>
           <div className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-            <Share2 size={18} className="text-white" />
+            {shared
+              ? <Check size={18} className="text-[#c9a96e]" />
+              : <Share2 size={18} className="text-white" />
+            }
           </div>
-          <span className="text-white/70 text-[10px] font-sans">Share</span>
+          <span className="text-white/70 text-[10px] font-sans">{shared ? 'Copied!' : 'Share'}</span>
         </button>
+
+        {/* Detail link */}
+        <Link
+          href={`/videos/${video.id}`}
+          className="flex flex-col items-center gap-1"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+            <Info size={18} className="text-white" />
+          </div>
+          <span className="text-white/70 text-[10px] font-sans">詳細</span>
+        </Link>
 
         {/* Sound toggle */}
         <button
