@@ -12,6 +12,6 @@ const RemotionPlayer = dynamic(() => import('@/components/videos/RemotionPlayer'
   ),
 });
 
-export default function VideoPlayerClient({ video }: { video: ShortVideo }) {
-  return <RemotionPlayer video={video} />;
+export default function VideoPlayerClient({ video, audioFile }: { video: ShortVideo; audioFile?: string }) {
+  return <RemotionPlayer video={video} audioFile={audioFile} />;
 }

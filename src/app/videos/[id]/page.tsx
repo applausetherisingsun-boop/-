@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { existsSync } from 'fs';
+import { resolve } from 'path';
 import { ArrowLeft, Heart, Share2, ChevronRight, Download } from 'lucide-react';
 import { getVideoById, getRelatedVideos, axisConfig, formatViews, videos } from '@/lib/videos';
 import VideoPlayerClient from '@/components/videos/VideoPlayerClient';
@@ -23,6 +25,9 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
   const video = getVideoById(id);
   if (!video) notFound();
 
+  const audioPath = resolve(process.cwd(), `public/audio/${id}.mp3`);
+  const audioFile = existsSync(audioPath) ? `audio/${id}.mp3` : undefined;
+
   const axis = axisConfig[video.axis];
   const related = getRelatedVideos(id, 4);
 
@@ -44,7 +49,7 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
           <div className="lg:col-span-2">
             {/* Remotion Player */}
             <div className="w-full max-w-sm mx-auto lg:mx-0">
-              <VideoPlayerClient video={video} />
+              <VideoPlayerClient video={video} audioFile={audioFile} />
             </div>
 
             {/* Action buttons */}

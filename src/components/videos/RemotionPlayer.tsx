@@ -6,6 +6,7 @@ import type { ShortVideo } from '@/lib/videos';
 
 type Props = {
   video: ShortVideo;
+  audioFile?: string;
 };
 
 function buildPoints(video: ShortVideo): ShortsVideoProps['points'] {
@@ -16,7 +17,7 @@ function buildPoints(video: ShortVideo): ShortsVideoProps['points'] {
   ];
 }
 
-export default function RemotionPlayer({ video }: Props) {
+export default function RemotionPlayer({ video, audioFile }: Props) {
   const inputProps: ShortsVideoProps = {
     title: video.title,
     titleJa: video.titleJa,
@@ -25,7 +26,7 @@ export default function RemotionPlayer({ video }: Props) {
     thumbnail: video.thumbnail,
     tags: video.tags.map((t) => t.replace(/\s+/g, '')),
     points: buildPoints(video),
-    audioFile: `audio/${video.id}.mp3`,
+    ...(audioFile ? { audioFile } : {}),
   };
 
   return (
