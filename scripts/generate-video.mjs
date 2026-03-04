@@ -45,19 +45,25 @@ function buildPrompt(topic) {
 
 Topic: "${topic}"
 
+CONTENT STYLE — "Journey Inside the Body":
+Every video must explain what physically happens INSIDE the human body, step by step:
+  摂取 (ingestion) → 消化・吸収 (digestion/absorption) → 作用機序 (mechanism of action at cellular/molecular level) → 生理的効果 (physiological effect) → 長期的結果 (long-term outcome)
+
 Your job: Create a short video that is:
-1. VIRAL: Opens with a shocking stat or counterintuitive claim in the first sentence
-2. CREDIBLE: Cites real researchers, journals, or specific study data
-3. CONCISE: Script is exactly 200-240 words (60-second speaking pace at 1.1x speed)
-4. ACTIONABLE: Ends with one concrete thing the viewer can do today
+1. VIRAL: Opens with a shocking body-science stat (e.g. "Your gut produces 95% of your serotonin")
+2. MECHANISTIC: Explains the exact biological process — enzymes, receptors, signaling pathways, organs involved
+3. VISUAL LANGUAGE: Use vivid body-interior imagery ("as it enters your bloodstream", "binds to the ACE2 receptor in your gut lining", "triggers mitochondrial biogenesis in muscle fibers")
+4. CREDIBLE: Cites real researchers, journals, or specific study data
+5. CONCISE: Script is exactly 200-240 words (60-second speaking pace at 1.1x speed)
+6. ACTIONABLE: Ends with one concrete thing the viewer can do today
 
 Return ONLY valid JSON (no markdown, no code fences):
 
 {
   "id": "<kebab-case-english-slug, max 40 chars>",
-  "title": "<English title. Must start with a number OR 'How' OR 'Why' OR provocative claim. Max 60 chars.>",
+  "title": "<English title. Must start with a number OR 'How' OR 'Why' OR provocative body-science claim. Max 60 chars.>",
   "titleJa": "<Japanese title, max 22 chars>",
-  "description": "<2 sentences. First sentence = shocking stat or surprising claim. Second = why it matters. English only.>",
+  "description": "<2 sentences. First = shocking body-science stat. Second = the physiological mechanism that explains it. English only.>",
   "axis": "<inflammation | gut | neural | metabolic | hormonal | social>",
   "duration": "<0:52 | 0:58 | 1:05 | 1:12 | 1:18 | 1:25>",
   "views": <integer 120000-1800000>,
@@ -66,12 +72,12 @@ Return ONLY valid JSON (no markdown, no code fences):
   "gradient": "from-[#HEX]/20 to-[#HEX]/20",
   "publishedAt": "2024-<MM>-<DD>",
   "tags": ["<Tag1>", "<Tag2>", "<Tag3>", "<Tag4>"],
-  "transcript": "<Full script in English. 200-240 words. Structure: [HOOK: shocking stat] → [SCIENCE: mechanism with researcher/study name] → [JAPAN: how Japanese practice this naturally] → [ACTION: one thing to do today]. Conversational, fast-paced, zero filler words.>",
-  "transcriptJa": "<同じ内容の日本語台本。250〜300字。構成: [フック：衝撃的な統計] → [科学メカニズム：研究者名・論文名を含む] → [日本の実践：日本人が自然に行っている方法] → [今日できること：具体的な1つのアクション]。会話調・テンポよく・無駄な言葉ゼロ。TTS読み上げ用なので漢字には読み仮名を振らずそのまま記述。>",
+  "transcript": "<Full script in English. 200-240 words. Structure: [HOOK: shocking body-science stat] → [STEP 1 - INGESTION: what happens when consumed] → [STEP 2 - MECHANISM: molecular/cellular process, name the enzyme/receptor/pathway] → [STEP 3 - EFFECT: what changes in the body, cite researcher/study] → [ACTION: one specific thing to do today]. Conversational, fast-paced, zero filler words. Use vivid interior-body language.>",
+  "transcriptJa": "<同じ内容の日本語台本。250〜300字。構成: [フック：衝撃的な体内事実] → [摂取：体に入ったとき何が起きるか] → [吸収・作用機序：酵素・受容体・シグナル経路など分子レベルで説明、研究者名・論文名を含む] → [生理的効果：体の中で何が変わるか] → [今日できること：具体的な1つのアクション]。会話調・テンポよく・無駄な言葉ゼロ。TTS読み上げ用なので漢字には読み仮名を振らずそのまま記述。>",
   "points": [
-    { "icon": "<emoji>", "text": "<key stat or fact, max 8 words>" },
-    { "icon": "<emoji>", "text": "<key mechanism, max 8 words>" },
-    { "icon": "<emoji>", "text": "<actionable insight, max 8 words>" }
+    { "icon": "<emoji>", "text": "<STEP 1: what happens at ingestion/digestion, max 8 words>" },
+    { "icon": "<emoji>", "text": "<STEP 2: the key molecular mechanism, max 8 words>" },
+    { "icon": "<emoji>", "text": "<STEP 3: the resulting physiological effect, max 8 words>" }
   ]
 }
 

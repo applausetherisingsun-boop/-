@@ -165,48 +165,91 @@ function TitleScene({ title, titleJa, axisColor }:
   );
 }
 
-// ── Facts Scene (8–46s): 3 key points ───────────────────────────────────────
-function FactsScene({ points, description, axisColor }:
-  { points: Array<{ icon: string; text: string }>; description: string; axisColor: string }) {
+// ── Facts Scene (8–46s): Body-process flow ①→②→③ ──────────────────────────
+const STEP_LABELS = ['摂取・消化', '作用機序', '生理的効果'];
+
+function FactsScene({ points, axisColor }:
+  { points: Array<{ icon: string; text: string }>; axisColor: string }) {
   const frame = useCurrentFrame();
 
   return (
     <AbsoluteFill style={{
       display: 'flex', flexDirection: 'column',
-      justifyContent: 'center', padding: '60px 64px', gap: 40,
+      justifyContent: 'center', padding: '48px 56px', gap: 0,
     }}>
-      {/* Description */}
+      {/* Section header */}
       <div style={{
-        opacity: interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' }),
-        transform: `translateY(${interpolate(frame, [0, 20], [20, 0], { extrapolateRight: 'clamp' })}px)`,
-        borderLeft: `5px solid ${axisColor}`,
-        paddingLeft: 28, marginBottom: 8,
+        opacity: interpolate(frame, [0, 15], [0, 1], { extrapolateRight: 'clamp' }),
+        marginBottom: 36,
       }}>
-        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 32, lineHeight: 1.55,
-          fontFamily: 'sans-serif', fontWeight: 500 }}>
-          {description}
-        </p>
+        <span style={{
+          color: axisColor, fontSize: 18, fontWeight: 700, fontFamily: 'sans-serif',
+          letterSpacing: 4, textTransform: 'uppercase',
+        }}>体内で起きること</span>
       </div>
 
-      {/* 3 key points */}
+      {/* Step cards with connector arrows */}
       {points.map((pt, i) => {
-        const startF = 25 + i * 22;
+        const startF = 10 + i * 28;
         const opacity = interpolate(frame, [startF, startF + 18], [0, 1], { extrapolateRight: 'clamp' });
-        const x = interpolate(frame, [startF, startF + 18], [-50, 0], {
+        const y = interpolate(frame, [startF, startF + 18], [30, 0], {
           extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic),
         });
+        const arrowOpacity = interpolate(frame, [startF + 20, startF + 28], [0, 1], { extrapolateRight: 'clamp' });
+
         return (
-          <div key={i} style={{
-            opacity, transform: `translateX(${x}px)`,
-            display: 'flex', alignItems: 'center', gap: 24,
-            background: 'rgba(255,255,255,0.06)',
-            border: `1px solid ${axisColor}35`, borderRadius: 24, padding: '22px 28px',
-          }}>
-            <span style={{ fontSize: 52, flexShrink: 0 }}>{pt.icon}</span>
-            <span style={{ color: 'rgba(255,255,255,0.92)', fontSize: 30,
-              lineHeight: 1.4, fontFamily: 'sans-serif', fontWeight: 600 }}>
-              {pt.text}
-            </span>
+          <div key={i}>
+            {/* Step card */}
+            <div style={{
+              opacity, transform: `translateY(${y}px)`,
+              display: 'flex', alignItems: 'center', gap: 20,
+              background: `linear-gradient(135deg, ${axisColor}18, rgba(255,255,255,0.04))`,
+              border: `1.5px solid ${axisColor}50`,
+              borderRadius: 20, padding: '20px 24px',
+              position: 'relative',
+            }}>
+              {/* Step number badge */}
+              <div style={{
+                position: 'absolute', top: -14, left: 20,
+                background: axisColor, borderRadius: 20,
+                padding: '3px 14px',
+                fontSize: 14, fontWeight: 800, color: '#0a0a08',
+                fontFamily: 'sans-serif', letterSpacing: 1,
+              }}>
+                STEP {i + 1}  {STEP_LABELS[i]}
+              </div>
+              {/* Icon */}
+              <span style={{ fontSize: 48, flexShrink: 0 }}>{pt.icon}</span>
+              {/* Text */}
+              <span style={{
+                color: 'rgba(255,255,255,0.93)', fontSize: 28,
+                lineHeight: 1.4, fontFamily: 'sans-serif', fontWeight: 600,
+              }}>
+                {pt.text}
+              </span>
+            </div>
+
+            {/* Arrow connector (between cards) */}
+            {i < points.length - 1 && (
+              <div style={{
+                opacity: arrowOpacity,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                height: 44,
+              }}>
+                <div style={{
+                  width: 2, height: 20, background: `${axisColor}70`,
+                  borderRadius: 1,
+                }} />
+                <div style={{
+                  position: 'absolute',
+                  width: 0, height: 0,
+                  borderLeft: '7px solid transparent',
+                  borderRight: '7px solid transparent',
+                  borderTop: `10px solid ${axisColor}90`,
+                  marginTop: 20,
+                }} />
+              </div>
+            )}
           </div>
         );
       })}
@@ -416,7 +459,7 @@ export function ShortsVideo({
       </Sequence>
 
       <Sequence from={HOOK_FRAMES + TITLE_FRAMES} durationInFrames={FACTS_FRAMES}>
-        <FactsScene points={points} description={description} axisColor={cfg.color} />
+        <FactsScene points={points} axisColor={cfg.color} />
       </Sequence>
 
       <Sequence from={HOOK_FRAMES + TITLE_FRAMES + FACTS_FRAMES} durationInFrames={CAPTION_FRAMES}>
