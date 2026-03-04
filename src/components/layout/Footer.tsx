@@ -26,6 +26,7 @@ export default function Footer() {
             <h4 className="text-white font-sans font-semibold mb-4 text-sm tracking-widest uppercase">Platform</h4>
             <ul className="space-y-2">
               {[
+                { href: '/videos', label: 'Shorts Videos' },
                 { href: '/diagnosis', label: 'Free Diagnosis' },
                 { href: '/science', label: 'Science Library' },
                 { href: '/marketplace', label: 'Marketplace' },

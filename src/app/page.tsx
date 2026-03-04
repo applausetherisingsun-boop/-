@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { ArrowRight, FlaskConical } from 'lucide-react';
+import { ArrowRight, FlaskConical, Play } from 'lucide-react';
+import { videos, axisConfig, formatViews } from '@/lib/videos';
 
 const axes = [
   {
@@ -248,6 +249,80 @@ export default function HomePage() {
               className="inline-flex items-center gap-3 bg-[#1a1a18] text-[#fafaf8] px-10 py-4 rounded-full text-base font-sans font-semibold hover:bg-[#c9a96e] transition-all duration-300"
             >
               Diagnose All 6 Axes — Free
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Shorts Preview Section */}
+      <section className="py-28 px-6 bg-[#0f0f0d]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+            <div>
+              <p className="text-[#c9a96e] text-xs font-sans tracking-[0.4em] uppercase mb-4">SHIROKUMA Shorts</p>
+              <h2 className="text-4xl md:text-5xl font-bold text-white">
+                Longevity science<br />in 60 seconds
+              </h2>
+              <p className="text-white/50 font-sans text-base mt-3 max-w-md">
+                ショート動画で日本の長寿科学を学ぶ
+              </p>
+            </div>
+            <Link
+              href="/videos"
+              className="mt-6 md:mt-0 flex items-center gap-2 bg-[#c9a96e] text-[#1a1a18] px-6 py-3 rounded-full text-sm font-sans font-semibold hover:bg-[#b8956a] transition-colors"
+            >
+              <Play size={14} fill="#1a1a18" />
+              Watch All Shorts
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {videos.slice(0, 5).map((video) => {
+              const axis = axisConfig[video.axis];
+              return (
+                <Link key={video.id} href={`/videos/${video.id}`} className="group">
+                  <div
+                    className={`relative rounded-2xl overflow-hidden aspect-[9/16] bg-gradient-to-br ${video.gradient} flex items-center justify-center`}
+                    style={{ backgroundColor: '#1a1a18' }}
+                  >
+                    <span className="text-5xl">{video.thumbnail}</span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    {/* Play overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <Play size={20} className="text-white ml-0.5" fill="white" />
+                      </div>
+                    </div>
+                    {/* Info */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <span
+                        className="text-[9px] font-sans font-semibold px-2 py-0.5 rounded-full"
+                        style={{ backgroundColor: `${axis.color}30`, color: axis.color }}
+                      >
+                        {axis.icon} {axis.label}
+                      </span>
+                      <p className="text-white text-xs font-semibold mt-1 leading-tight line-clamp-2">
+                        {video.title}
+                      </p>
+                      <p className="text-white/40 text-[9px] font-sans mt-1">{formatViews(video.views)} views · {video.duration}</p>
+                    </div>
+                    {/* Duration badge */}
+                    <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-sans px-1.5 py-0.5 rounded">
+                      {video.duration}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/videos"
+              className="inline-flex items-center gap-3 border border-white/20 text-white px-10 py-4 rounded-full text-base font-sans hover:border-[#c9a96e] hover:text-[#c9a96e] transition-all duration-300"
+            >
+              Open Shorts Feed — {videos.length} videos
               <ArrowRight size={18} />
             </Link>
           </div>
