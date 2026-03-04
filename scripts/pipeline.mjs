@@ -2,24 +2,26 @@
 /**
  * SHIROKUMA Shorts — One-Command Production Pipeline
  *
- *  ① Claude API   → 台本・データ生成 (claude-sonnet-4-6)
- *  ② OpenAI TTS   → ナレーション音声 MP3 (public/audio/)
- *  ③ Whisper API  → 単語タイムスタンプ → カラオケ字幕同期
- *  ④ Remotion     → MP4レンダリング 1080×1920
- *  ⑤ YouTube API  → Shorts 自動投稿 (--upload フラグ時)
+ *  ① Claude API       → 台本・データ生成 (claude-sonnet-4-6)
+ *  ② Google TTS Neural2→ 日本語ナレーション MP3 ja-JP-Neural2 (public/audio/)
+ *  ③ OpenAI Whisper    → 単語タイムスタンプ → カラオケ字幕同期
+ *  ④ Remotion          → MP4レンダリング 1080×1920
+ *  ⑤ YouTube API       → Shorts 自動投稿 (--upload フラグ時)
  *
  * Usage:
  *   node scripts/pipeline.mjs --topic "腸内細菌と長寿"
- *   node scripts/pipeline.mjs --all               # 20本まとめて
- *   node scripts/pipeline.mjs --no-tts            # 音声なし（字幕もスキップ）
- *   node scripts/pipeline.mjs --no-render         # 生成のみ
- *   node scripts/pipeline.mjs --upload            # レンダー後 YouTube に自動投稿
- *   node scripts/pipeline.mjs --upload --private  # 限定公開で投稿
+ *   node scripts/pipeline.mjs --all                   # 20本まとめて
+ *   node scripts/pipeline.mjs --no-tts                # 音声なし（字幕もスキップ）
+ *   node scripts/pipeline.mjs --no-render             # 生成のみ
+ *   node scripts/pipeline.mjs --upload                # レンダー後 YouTube に自動投稿
+ *   node scripts/pipeline.mjs --upload --private      # 限定公開で投稿
  *   node scripts/pipeline.mjs --upload --schedule "2026-03-10T09:00:00+09:00"
+ *   node scripts/pipeline.mjs --voice ja-JP-Neural2-C # 女性ボイスに変更
  *
  * Requires .env.local:
  *   ANTHROPIC_API_KEY=sk-ant-...   (台本生成)
- *   OPENAI_API_KEY=sk-...          (TTS + Whisper)
+ *   GOOGLE_TTS_API_KEY=AIza...     (音声生成 ← Google Cloud Console で取得)
+ *   OPENAI_API_KEY=sk-...          (Whisper字幕同期)
  *   YOUTUBE_CLIENT_ID=...          (投稿時のみ)
  *   YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
  *   YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ)
@@ -59,44 +61,8 @@ function run(command) {
   }
 }
 
-async function generateTTS(id, transcript, voice = 'nova') {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    console.log('⚠️  OPENAI_API_KEY not set → skipping TTS');
-    return null;
-  }
-
-  mkdirSync(resolve(ROOT, 'public/audio'), { recursive: true });
-  const outputPath = resolve(ROOT, `public/audio/${id}.mp3`);
-
-  if (existsSync(outputPath)) {
-    console.log(`⏭  TTS cached: ${id}.mp3`);
-    return `audio/${id}.mp3`;
-  }
-
-  console.log(`🎙  TTS: ${id} (${transcript.split(' ').length} words)`);
-
-  const res = await fetch('https://api.openai.com/v1/audio/speech', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'tts-1-hd',
-      input: transcript,
-      voice,   // nova = natural female, onyx = deep male, alloy = neutral
-      speed: 1.1,
-    }),
-  });
-
-  if (!res.ok) {
-    console.error(`❌ TTS error ${res.status}: ${await res.text()}`);
-    return null;
-  }
-
-  const buf = Buffer.from(await res.arrayBuffer());
-  writeFileSync(outputPath, buf);
-  console.log(`✅ Audio: public/audio/${id}.mp3`);
-  return `audio/${id}.mp3`;
-}
+// TTS は generate-tts.mjs (Google Cloud TTS Neural2) に委譲
+// processTopic() 内で動的 import して呼ぶ
 
 function updateProps(id, updates) {
   const propsPath = resolve(ROOT, `out/props/${id}.json`);
@@ -133,18 +99,29 @@ function renderVideo(id, propsPath) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-async function processTopic(topic, { doTTS, doRender, doUpload, uploadPrivate, scheduledAt }) {
+async function processTopic(topic, { doTTS, doRender, doUpload, uploadPrivate, scheduledAt, voice }) {
   console.log(`\n${'═'.repeat(60)}`);
   console.log(`📽  ${topic}`);
 
-  // ① 台本生成 (Claude API)
-  const { generateVideo, saveProps } = await import('./generate-video.mjs');
+  // ① 台本生成 (Claude API claude-sonnet-4-6)
+  const { generateVideo } = await import('./generate-video.mjs');
   const { data, propsPath } = await generateVideo(topic);
 
-  // ② TTS (OpenAI → public/audio/)
+  // ② TTS (Google Cloud TTS Neural2 → public/audio/)
+  //    transcriptJa(日本語)を優先、なければ transcript にフォールバック
   let audioFile = null;
-  if (doTTS && data.transcript) {
-    audioFile = await generateTTS(data.id, data.transcript);
+  const ttsText = data.transcriptJa ?? data.transcript;
+  if (doTTS && ttsText) {
+    try {
+      const { generateTTS } = await import('./generate-tts.mjs');
+      audioFile = await generateTTS({ id: data.id, transcript: ttsText, ...(voice ? { voice } : {}) });
+    } catch (e) {
+      if (!process.env.GOOGLE_TTS_API_KEY) {
+        console.warn('⚠️  GOOGLE_TTS_API_KEY not set → TTS skipped');
+      } else {
+        console.error(`❌ TTS failed: ${e.message}`);
+      }
+    }
     if (audioFile) updatePropsWithAudio(data.id, audioFile);
   }
 
@@ -193,14 +170,16 @@ async function processTopic(topic, { doTTS, doRender, doUpload, uploadPrivate, s
 
 async function main() {
   const args = process.argv.slice(2);
-  const topicIdx    = args.findIndex((a) => a === '--topic');
-  const doAll       = args.includes('--all');
-  const noTTS       = args.includes('--no-tts');
-  const noRender    = args.includes('--no-render');
-  const doUpload    = args.includes('--upload');
+  const topicIdx      = args.findIndex((a) => a === '--topic');
+  const doAll         = args.includes('--all');
+  const noTTS         = args.includes('--no-tts');
+  const noRender      = args.includes('--no-render');
+  const doUpload      = args.includes('--upload');
   const uploadPrivate = args.includes('--private');
-  const schedIdx    = args.findIndex((a) => a === '--schedule');
-  const scheduledAt = schedIdx !== -1 ? args[schedIdx + 1] : null;
+  const schedIdx      = args.findIndex((a) => a === '--schedule');
+  const scheduledAt   = schedIdx !== -1 ? args[schedIdx + 1] : null;
+  const voiceIdx      = args.findIndex((a) => a === '--voice');
+  const voice         = voiceIdx !== -1 ? args[voiceIdx + 1] : 'ja-JP-Neural2-B';
 
   if (!doAll && topicIdx === -1) {
     console.log(`
@@ -213,10 +192,17 @@ SHIROKUMA Shorts Pipeline
   node scripts/pipeline.mjs --topic "..." --upload      生成後 YouTube 投稿
   node scripts/pipeline.mjs --topic "..." --upload --private
   node scripts/pipeline.mjs --topic "..." --upload --schedule "2026-03-10T09:00:00+09:00"
+  node scripts/pipeline.mjs --topic "..." --voice ja-JP-Neural2-C  # 女性ボイス
+
+TTS ボイス (Google Cloud Neural2 ja-JP):
+  ja-JP-Neural2-B  男性・落ち着き  ← デフォルト
+  ja-JP-Neural2-C  女性・自然
+  ja-JP-Neural2-D  男性・若め
 
 必要な環境変数 (.env.local):
   ANTHROPIC_API_KEY=sk-ant-...   (台本生成 ← Claude API)
-  OPENAI_API_KEY=sk-...          (TTS + Whisper字幕)
+  GOOGLE_TTS_API_KEY=AIza...     (音声生成 ← Google Cloud Console)
+  OPENAI_API_KEY=sk-...          (Whisper字幕同期)
   YOUTUBE_CLIENT_ID=...          (投稿時のみ)
   YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
   YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ → --auth で取得)
@@ -235,11 +221,12 @@ SHIROKUMA Shorts Pipeline
     : [args[topicIdx + 1]];
 
   const opts = {
-    doTTS:    !noTTS,
+    doTTS: !noTTS,
     doRender: !noRender,
     doUpload,
     uploadPrivate,
     scheduledAt,
+    voice,
   };
 
   console.log(`\n🚀 SHIROKUMA Shorts Pipeline`);

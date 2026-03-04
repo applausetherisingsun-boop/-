@@ -66,7 +66,8 @@ Return ONLY valid JSON (no markdown, no code fences):
   "gradient": "from-[#HEX]/20 to-[#HEX]/20",
   "publishedAt": "2024-<MM>-<DD>",
   "tags": ["<Tag1>", "<Tag2>", "<Tag3>", "<Tag4>"],
-  "transcript": "<Full script. 200-240 words. Structure: [HOOK: shocking stat] → [SCIENCE: mechanism with researcher/study name] → [JAPAN: how Japanese practice this naturally] → [ACTION: one thing to do today]. Conversational, fast-paced, zero filler words.>",
+  "transcript": "<Full script in English. 200-240 words. Structure: [HOOK: shocking stat] → [SCIENCE: mechanism with researcher/study name] → [JAPAN: how Japanese practice this naturally] → [ACTION: one thing to do today]. Conversational, fast-paced, zero filler words.>",
+  "transcriptJa": "<同じ内容の日本語台本。250〜300字。構成: [フック：衝撃的な統計] → [科学メカニズム：研究者名・論文名を含む] → [日本の実践：日本人が自然に行っている方法] → [今日できること：具体的な1つのアクション]。会話調・テンポよく・無駄な言葉ゼロ。TTS読み上げ用なので漢字には読み仮名を振らずそのまま記述。>",
   "points": [
     { "icon": "<emoji>", "text": "<key stat or fact, max 8 words>" },
     { "icon": "<emoji>", "text": "<key mechanism, max 8 words>" },
@@ -157,6 +158,7 @@ export function saveProps(v) {
     thumbnail: v.thumbnail,
     tags: v.tags.map((t) => t.replace(/\s+/g, '')),
     transcript: v.transcript,
+    transcriptJa: v.transcriptJa ?? null, // Google Cloud TTS 用日本語台本
     points: v.points ?? [
       { icon: '🔬', text: v.tags[0] ?? '' },
       { icon: '📖', text: v.tags[1] ?? '' },
