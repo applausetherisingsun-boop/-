@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 /**
- * SHIROKUMA Shorts — Whisper Caption Generator
+ * SHIROKUMA Shorts — Google Cloud Speech-to-Text 字幕タイミング生成
  *
- * OpenAI Whisper APIを使って音声ファイルから単語レベルのタイムスタンプを取得する。
- * Remotion の KaraokeOverlay に渡すことでフレーム精度の字幕同期を実現。
+ * OpenAI Whisper から Google Cloud Speech-to-Text (ja-JP) に切り替え。
+ * TTS と同じ GOOGLE_TTS_API_KEY を使用（同一GCPプロジェクト）。
+ *
+ * セットアップ:
+ *   Google Cloud Console → APIとサービス → 「Cloud Speech-to-Text API」を有効化
+ *   （TTS用APIキーと同じキーで動作、追加費用 ~$0.024/動画）
  *
  * Usage:
  *   node scripts/generate-captions.mjs --id natto-nattokinase
@@ -12,71 +16,87 @@
  * Output: out/props/{id}.json に captions フィールドを追加
  *
  * captions 形式:
- *   [{ word: "Hello", start: 0.0, end: 0.32 }, ...]
+ *   [{ word: "腸内細菌", start: 0.0, end: 0.45 }, ...]
  */
 
-import { createReadStream, readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
+const STT_ENDPOINT = 'https://speech.googleapis.com/v1p1beta1/speech:recognize';
+
 /**
- * Whisper API で単語タイムスタンプを取得する
- * @param {string} audioPath - 音声ファイルの絶対パス
+ * Google Cloud STT で単語タイムスタンプを取得する
+ * @param {string} audioPath - 音声ファイルの絶対パス (MP3)
  * @returns {Promise<Array<{word: string, start: number, end: number}>>}
  */
 export async function generateCaptions(audioPath) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error('OPENAI_API_KEY not set in .env.local');
+  const apiKey = process.env.GOOGLE_TTS_API_KEY;
+  if (!apiKey) throw new Error('GOOGLE_TTS_API_KEY not set in .env.local');
 
   if (!existsSync(audioPath)) {
     throw new Error(`Audio file not found: ${audioPath}`);
   }
 
-  console.log(`🎤 Whisper: analyzing ${audioPath.split('/').pop()}`);
+  console.log(`🎤 Google STT: analyzing ${audioPath.split('/').pop()}`);
 
-  // multipart/form-data を手動で構築（Node.js 内蔵fetch対応）
-  const boundary = `----FormBoundary${Math.random().toString(36).slice(2)}`;
+  // MP3 を base64 でインラインリクエスト（60秒・10MB以内なら同期APIで可）
   const audioBuffer = readFileSync(audioPath);
-  const filename = audioPath.split('/').pop();
+  const audioBase64 = audioBuffer.toString('base64');
 
-  const formParts = [
-    `--${boundary}\r\nContent-Disposition: form-data; name="model"\r\n\r\nwhisper-1`,
-    `--${boundary}\r\nContent-Disposition: form-data; name="response_format"\r\n\r\nverbose_json`,
-    `--${boundary}\r\nContent-Disposition: form-data; name="timestamp_granularities[]"\r\n\r\nword`,
-    `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: audio/mpeg\r\n\r\n`,
-  ];
-
-  const formPrefix = Buffer.from(formParts.join('\r\n') + '\r\n');
-  const formSuffix = Buffer.from(`\r\n--${boundary}--\r\n`);
-  const body = Buffer.concat([formPrefix, audioBuffer, formSuffix]);
-
-  const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': `multipart/form-data; boundary=${boundary}`,
-      'Content-Length': String(body.length),
+  const body = {
+    config: {
+      encoding: 'MP3',
+      languageCode: 'ja-JP',
+      enableWordTimeOffsets: true,
+      model: 'latest_long',        // 日本語長尺で最高精度
+      useEnhanced: true,           // 拡張モデル（精度向上）
     },
-    body,
+    audio: {
+      content: audioBase64,
+    },
+  };
+
+  const res = await fetch(`${STT_ENDPOINT}?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
-    throw new Error(`Whisper API ${res.status}: ${await res.text()}`);
+    const err = await res.text();
+    // Speech-to-Text API が有効化されていない場合のわかりやすいエラー
+    if (err.includes('SERVICE_DISABLED') || err.includes('has not been used')) {
+      throw new Error(
+        'Cloud Speech-to-Text API が有効化されていません。\n' +
+        'Google Cloud Console → APIとサービス → 「Cloud Speech-to-Text API」を有効化してください。'
+      );
+    }
+    throw new Error(`Google STT error ${res.status}: ${err}`);
   }
 
   const data = await res.json();
 
-  // verbose_json は words[] に単語タイムスタンプを持つ
-  const words = (data.words ?? []).map((w) => ({
-    word: w.word.replace(/^\s+/, ''), // 先頭スペースを除去
-    start: Number(w.start.toFixed(3)),
-    end: Number(w.end.toFixed(3)),
-  }));
+  // results[] → alternatives[0].words[] に単語タイムスタンプが入る
+  const words = [];
+  for (const result of data.results ?? []) {
+    const alt = result.alternatives?.[0];
+    for (const w of alt?.words ?? []) {
+      words.push({
+        word: w.word,
+        start: Number(parseFloat(w.startTime ?? '0').toFixed(3)),
+        end: Number(parseFloat(w.endTime ?? '0').toFixed(3)),
+      });
+    }
+  }
 
-  console.log(`✅ Captions: ${words.length} words (${data.text?.split(' ').length ?? 0} text words)`);
+  const transcript = (data.results ?? [])
+    .map((r) => r.alternatives?.[0]?.transcript ?? '')
+    .join('');
+  console.log(`✅ Captions: ${words.length} words | "${transcript.slice(0, 30)}..."`);
   return words;
 }
 
@@ -96,7 +116,6 @@ export function saveCaptionsToProps(id, captions) {
 
 // ── CLI ───────────────────────────────────────────────────────────────────────
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  // .env.local を読み込む
   const envPath = resolve(ROOT, '.env.local');
   if (existsSync(envPath)) {
     for (const line of readFileSync(envPath, 'utf8').split('\n')) {

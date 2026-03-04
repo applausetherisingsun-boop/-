@@ -4,7 +4,7 @@
  *
  *  ① Claude API       → 台本・データ生成 (claude-sonnet-4-6)
  *  ② Google TTS Neural2→ 日本語ナレーション MP3 ja-JP-Neural2 (public/audio/)
- *  ③ OpenAI Whisper    → 単語タイムスタンプ → カラオケ字幕同期
+ *  ③ Google STT       → 単語タイムスタンプ → カラオケ字幕同期 (ja-JP)
  *  ④ Remotion          → MP4レンダリング 1080×1920
  *  ⑤ YouTube API       → Shorts 自動投稿 (--upload フラグ時)
  *
@@ -21,7 +21,7 @@
  * Requires .env.local:
  *   ANTHROPIC_API_KEY=sk-ant-...   (台本生成)
  *   GOOGLE_TTS_API_KEY=AIza...     (音声生成 ← Google Cloud Console で取得)
- *   OPENAI_API_KEY=sk-...          (Whisper字幕同期)
+ *   # OPENAI_API_KEY 不要 → Google STT に統一
  *   YOUTUBE_CLIENT_ID=...          (投稿時のみ)
  *   YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
  *   YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ)
