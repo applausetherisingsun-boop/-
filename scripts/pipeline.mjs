@@ -2,11 +2,11 @@
 /**
  * SHIROKUMA Shorts — One-Command Production Pipeline
  *
- *  ① Claude API       → 台本・データ生成 (claude-sonnet-4-6)
- *  ② Google TTS Neural2→ 日本語ナレーション MP3 ja-JP-Neural2 (public/audio/)
- *  ③ Google STT       → 単語タイムスタンプ → カラオケ字幕同期 (ja-JP)
- *  ④ Remotion          → MP4レンダリング 1080×1920
- *  ⑤ YouTube API       → Shorts 自動投稿 (--upload フラグ時)
+ *  ① Claude API    → 台本・データ生成 (claude-sonnet-4-6)
+ *  ② OpenAI TTS   → 日本語ナレーション MP3 (public/audio/)
+ *  ③ OpenAI Whisper→ 単語タイムスタンプ → カラオケ字幕同期
+ *  ④ Remotion      → MP4レンダリング 1080×1920
+ *  ⑤ YouTube API   → Shorts 自動投稿 (--upload フラグ時)
  *
  * Usage:
  *   node scripts/pipeline.mjs --topic "腸内細菌と長寿"
@@ -16,12 +16,11 @@
  *   node scripts/pipeline.mjs --upload                # レンダー後 YouTube に自動投稿
  *   node scripts/pipeline.mjs --upload --private      # 限定公開で投稿
  *   node scripts/pipeline.mjs --upload --schedule "2026-03-10T09:00:00+09:00"
- *   node scripts/pipeline.mjs --voice ja-JP-Neural2-C # 女性ボイスに変更
+ *   node scripts/pipeline.mjs --voice nova            # 女性ボイスに変更
  *
  * Requires .env.local:
  *   ANTHROPIC_API_KEY=sk-ant-...   (台本生成)
- *   GOOGLE_TTS_API_KEY=AIza...     (音声生成 ← Google Cloud Console で取得)
- *   # OPENAI_API_KEY 不要 → Google STT に統一
+ *   OPENAI_API_KEY=sk-...          (音声生成 + 字幕同期)
  *   YOUTUBE_CLIENT_ID=...          (投稿時のみ)
  *   YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
  *   YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ)
@@ -116,8 +115,8 @@ async function processTopic(topic, { doTTS, doRender, doUpload, uploadPrivate, s
       const { generateTTS } = await import('./generate-tts.mjs');
       audioFile = await generateTTS({ id: data.id, transcript: ttsText, ...(voice ? { voice } : {}) });
     } catch (e) {
-      if (!process.env.GOOGLE_TTS_API_KEY) {
-        console.warn('⚠️  GOOGLE_TTS_API_KEY not set → TTS skipped');
+      if (!process.env.OPENAI_API_KEY) {
+        console.warn('⚠️  OPENAI_API_KEY not set → TTS skipped');
       } else {
         console.error(`❌ TTS failed: ${e.message}`);
       }
@@ -179,7 +178,7 @@ async function main() {
   const schedIdx      = args.findIndex((a) => a === '--schedule');
   const scheduledAt   = schedIdx !== -1 ? args[schedIdx + 1] : null;
   const voiceIdx      = args.findIndex((a) => a === '--voice');
-  const voice         = voiceIdx !== -1 ? args[voiceIdx + 1] : 'ja-JP-Neural2-B';
+  const voice         = voiceIdx !== -1 ? args[voiceIdx + 1] : 'onyx';
 
   if (!doAll && topicIdx === -1) {
     console.log(`
@@ -194,15 +193,15 @@ SHIROKUMA Shorts Pipeline
   node scripts/pipeline.mjs --topic "..." --upload --schedule "2026-03-10T09:00:00+09:00"
   node scripts/pipeline.mjs --topic "..." --voice ja-JP-Neural2-C  # 女性ボイス
 
-TTS ボイス (Google Cloud Neural2 ja-JP):
-  ja-JP-Neural2-B  男性・落ち着き  ← デフォルト
-  ja-JP-Neural2-C  女性・自然
-  ja-JP-Neural2-D  男性・若め
+TTS ボイス (OpenAI):
+  onyx     男性・落ち着き  ← デフォルト
+  nova     女性・自然
+  echo     男性・若め
+  shimmer  女性・明るい
 
 必要な環境変数 (.env.local):
   ANTHROPIC_API_KEY=sk-ant-...   (台本生成 ← Claude API)
-  GOOGLE_TTS_API_KEY=AIza...     (音声生成 ← Google Cloud Console)
-  OPENAI_API_KEY=sk-...          (Whisper字幕同期)
+  OPENAI_API_KEY=sk-...          (音声生成 + 字幕同期)
   YOUTUBE_CLIENT_ID=...          (投稿時のみ)
   YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
   YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ → --auth で取得)

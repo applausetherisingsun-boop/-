@@ -1,16 +1,12 @@
 #!/usr/bin/env node
 /**
- * SHIROKUMA Shorts — Google Cloud Speech-to-Text 字幕タイミング生成
- *
- * OpenAI Whisper から Google Cloud Speech-to-Text (ja-JP) に切り替え。
- * TTS と同じ GOOGLE_TTS_API_KEY を使用（同一GCPプロジェクト）。
- *
- * セットアップ:
- *   Google Cloud Console → APIとサービス → 「Cloud Speech-to-Text API」を有効化
- *   （TTS用APIキーと同じキーで動作、追加費用 ~$0.024/動画）
+ * SHIROKUMA Shorts — OpenAI Whisper 字幕タイミング生成
  *
  * Usage:
  *   node scripts/generate-captions.mjs --id natto-nattokinase
+ *
+ * Requires .env.local:
+ *   OPENAI_API_KEY=sk-...
  *
  * Input:  public/audio/{id}.mp3
  * Output: out/props/{id}.json に captions フィールドを追加
@@ -26,77 +22,52 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 
-const STT_ENDPOINT = 'https://speech.googleapis.com/v1p1beta1/speech:recognize';
-
 /**
- * Google Cloud STT で単語タイムスタンプを取得する
+ * OpenAI Whisper で単語タイムスタンプを取得する
  * @param {string} audioPath - 音声ファイルの絶対パス (MP3)
  * @returns {Promise<Array<{word: string, start: number, end: number}>>}
  */
 export async function generateCaptions(audioPath) {
-  const apiKey = process.env.GOOGLE_TTS_API_KEY;
-  if (!apiKey) throw new Error('GOOGLE_TTS_API_KEY not set in .env.local');
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error('OPENAI_API_KEY not set in .env.local');
 
   if (!existsSync(audioPath)) {
     throw new Error(`Audio file not found: ${audioPath}`);
   }
 
-  console.log(`🎤 Google STT: analyzing ${audioPath.split('/').pop()}`);
+  console.log(`🎤 OpenAI Whisper: analyzing ${audioPath.split('/').pop()}`);
 
-  // MP3 を base64 でインラインリクエスト（60秒・10MB以内なら同期APIで可）
   const audioBuffer = readFileSync(audioPath);
-  const audioBase64 = audioBuffer.toString('base64');
+  const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
 
-  const body = {
-    config: {
-      encoding: 'MP3',
-      languageCode: 'ja-JP',
-      enableWordTimeOffsets: true,
-      model: 'latest_long',        // 日本語長尺で最高精度
-      useEnhanced: true,           // 拡張モデル（精度向上）
-    },
-    audio: {
-      content: audioBase64,
-    },
-  };
+  const formData = new FormData();
+  formData.append('file', blob, 'audio.mp3');
+  formData.append('model', 'whisper-1');
+  formData.append('language', 'ja');
+  formData.append('response_format', 'verbose_json');
+  formData.append('timestamp_granularities[]', 'word');
 
-  const res = await fetch(`${STT_ENDPOINT}?key=${apiKey}`, {
+  const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    headers: { 'Authorization': `Bearer ${apiKey}` },
+    body: formData,
   });
 
   if (!res.ok) {
     const err = await res.text();
-    // Speech-to-Text API が有効化されていない場合のわかりやすいエラー
-    if (err.includes('SERVICE_DISABLED') || err.includes('has not been used')) {
-      throw new Error(
-        'Cloud Speech-to-Text API が有効化されていません。\n' +
-        'Google Cloud Console → APIとサービス → 「Cloud Speech-to-Text API」を有効化してください。'
-      );
-    }
-    throw new Error(`Google STT error ${res.status}: ${err}`);
+    throw new Error(`OpenAI Whisper error ${res.status}: ${err}`);
   }
 
   const data = await res.json();
 
-  // results[] → alternatives[0].words[] に単語タイムスタンプが入る
-  const words = [];
-  for (const result of data.results ?? []) {
-    const alt = result.alternatives?.[0];
-    for (const w of alt?.words ?? []) {
-      words.push({
-        word: w.word,
-        start: Number(parseFloat(w.startTime ?? '0').toFixed(3)),
-        end: Number(parseFloat(w.endTime ?? '0').toFixed(3)),
-      });
-    }
-  }
+  const words = (data.words ?? []).map((w) => ({
+    word: w.word,
+    start: Number(w.start.toFixed(3)),
+    end: Number(w.end.toFixed(3)),
+  }));
 
-  const transcript = (data.results ?? [])
-    .map((r) => r.alternatives?.[0]?.transcript ?? '')
-    .join('');
-  console.log(`✅ Captions: ${words.length} words | "${transcript.slice(0, 30)}..."`);
+  const preview = data.text?.slice(0, 30) ?? '';
+  console.log(`✅ Captions: ${words.length} words | "${preview}..."`);
   return words;
 }
 
