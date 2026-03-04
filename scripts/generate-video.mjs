@@ -83,28 +83,31 @@ Gradient hex guidelines (match axis):
 - social: #c9a96e → #7a9e7e`;
 }
 
-// ── Claude API ────────────────────────────────────────────────────────────────
+// ── OpenAI API (GPT-4o) ───────────────────────────────────────────────────────
 async function callClaude(topic) {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) throw new Error('ANTHROPIC_API_KEY not set');
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error('OPENAI_API_KEY not set');
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
+      model: 'gpt-4o',
       max_tokens: 2048,
-      messages: [{ role: 'user', content: buildPrompt(topic) }],
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: 'You are a viral science educator. Return only valid JSON.' },
+        { role: 'user', content: buildPrompt(topic) },
+      ],
     }),
   });
 
-  if (!res.ok) throw new Error(`Claude ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`OpenAI ${res.status}: ${await res.text()}`);
   const data = await res.json();
-  const raw = data.content[0].text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+  const raw = data.choices[0].message.content.trim();
   return JSON.parse(raw);
 }
 

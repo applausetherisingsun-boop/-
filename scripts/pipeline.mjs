@@ -14,8 +14,7 @@
  *   node scripts/pipeline.mjs --no-render    # 生成のみ（レンダーなし）
  *
  * Requires .env.local:
- *   ANTHROPIC_API_KEY=sk-ant-...
- *   OPENAI_API_KEY=sk-...           (TTSを使う場合)
+ *   OPENAI_API_KEY=sk-...           (台本生成 + TTS、これだけでOK)
  */
 
 import { execSync } from 'child_process';
