@@ -84,20 +84,19 @@ Gradient hex guidelines (match axis):
 - social: #c9a96e → #7a9e7e`;
 }
 
-// ── Claude API (Anthropic claude-sonnet-4-6) ──────────────────────────────────
+// ── OpenAI GPT-4o API ─────────────────────────────────────────────────────────
 async function callClaude(topic) {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) throw new Error('ANTHROPIC_API_KEY not set in .env.local');
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error('OPENAI_API_KEY not set in .env.local');
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
+      'Authorization': `Bearer ${key}`,
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
+      model: 'gpt-4o',
       max_tokens: 2048,
       messages: [
         { role: 'user', content: buildPrompt(topic) },
@@ -105,9 +104,9 @@ async function callClaude(topic) {
     }),
   });
 
-  if (!res.ok) throw new Error(`Claude API ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`OpenAI API ${res.status}: ${await res.text()}`);
   const data = await res.json();
-  const raw = data.content[0].text.trim();
+  const raw = data.choices[0].message.content.trim();
 
   // Strip markdown code fences if present
   const jsonStr = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
@@ -170,7 +169,7 @@ export function saveProps(v) {
 
 // ── Main export ───────────────────────────────────────────────────────────────
 export async function generateVideo(topic) {
-  console.log(`\n🤖 Claude: "${topic}"`);
+  console.log(`\n🤖 GPT-4o: "${topic}"`);
   const data = await callClaude(topic);
   console.log(`📝 "${data.title}" [${data.axis}]`);
   injectVideo(data);
