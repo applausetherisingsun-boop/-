@@ -1,105 +1,208 @@
 #!/usr/bin/env node
 /**
- * SHIROKUMA Shorts — Full Automation Pipeline
+ * SHIROKUMA Shorts — One-Command Production Pipeline
  *
- * 1. Generate video data via Claude API
- * 2. Render MP4 via Remotion
- * 3. Output: out/mp4/shorts-{id}.mp4 (1080×1920, ready for YouTube Shorts)
+ *  ① Claude API  → 台本・データ生成
+ *  ② OpenAI TTS  → ナレーション音声 (MP3)
+ *  ③ Remotion    → MP4レンダリング (1080×1920)
+ *  ④ out/mp4/    → YouTubeにそのままアップロード可能
  *
  * Usage:
  *   node scripts/pipeline.mjs --topic "腸内細菌と長寿"
- *   node scripts/pipeline.mjs --all        # all 20 topic seeds
- *   ANTHROPIC_API_KEY=sk-... node scripts/pipeline.mjs --topic "..."
+ *   node scripts/pipeline.mjs --all          # 20本まとめて
+ *   node scripts/pipeline.mjs --no-tts       # 音声なし
+ *   node scripts/pipeline.mjs --no-render    # 生成のみ（レンダーなし）
+ *
+ * Requires .env.local:
+ *   ANTHROPIC_API_KEY=sk-ant-...
+ *   OPENAI_API_KEY=sk-...           (TTSを使う場合)
  */
 
-import { spawn } from 'child_process';
+import { execSync } from 'child_process';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, copyFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readFileSync, existsSync } from 'fs';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(new URL(import.meta.url).pathname);
 const ROOT = resolve(__dirname, '..');
 
-function run(cmd, args, opts = {}) {
-  return new Promise((resolve, reject) => {
-    const proc = spawn(cmd, args, { stdio: 'inherit', cwd: ROOT, ...opts });
-    proc.on('close', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`"${cmd} ${args.join(' ')}" exited with code ${code}`));
-    });
+// Load .env.local
+function loadEnv() {
+  const envPath = resolve(ROOT, '.env.local');
+  if (existsSync(envPath)) {
+    const lines = readFileSync(envPath, 'utf8').split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const [key, ...rest] = trimmed.split('=');
+      if (key && rest.length) process.env[key.trim()] = rest.join('=').trim();
+    }
+  }
+}
+loadEnv();
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function run(command) {
+  try {
+    execSync(command, { stdio: 'inherit', cwd: ROOT });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function generateTTS(id, transcript, voice = 'nova') {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    console.log('⚠️  OPENAI_API_KEY not set → skipping TTS');
+    return null;
+  }
+
+  mkdirSync(resolve(ROOT, 'public/audio'), { recursive: true });
+  const outputPath = resolve(ROOT, `public/audio/${id}.mp3`);
+
+  if (existsSync(outputPath)) {
+    console.log(`⏭  TTS cached: ${id}.mp3`);
+    return `audio/${id}.mp3`;
+  }
+
+  console.log(`🎙  TTS: ${id} (${transcript.split(' ').length} words)`);
+
+  const res = await fetch('https://api.openai.com/v1/audio/speech', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'tts-1-hd',
+      input: transcript,
+      voice,   // nova = natural female, onyx = deep male, alloy = neutral
+      speed: 1.1,
+    }),
   });
+
+  if (!res.ok) {
+    console.error(`❌ TTS error ${res.status}: ${await res.text()}`);
+    return null;
+  }
+
+  const buf = Buffer.from(await res.arrayBuffer());
+  writeFileSync(outputPath, buf);
+  console.log(`✅ Audio: public/audio/${id}.mp3`);
+  return `audio/${id}.mp3`;
+}
+
+function updatePropsWithAudio(id, audioFile) {
+  const propsPath = resolve(ROOT, `out/props/${id}.json`);
+  if (!existsSync(propsPath)) return;
+  const props = JSON.parse(readFileSync(propsPath, 'utf8'));
+  props.audioFile = audioFile;
+  writeFileSync(propsPath, JSON.stringify(props, null, 2), 'utf8');
+}
+
+function renderVideo(id, propsPath) {
+  mkdirSync(resolve(ROOT, 'out/mp4'), { recursive: true });
+  const mp4 = resolve(ROOT, `out/mp4/shorts-${id}.mp4`);
+
+  if (existsSync(mp4)) {
+    console.log(`⏭  Already rendered: shorts-${id}.mp4`);
+    return mp4;
+  }
+
+  const ok = run(
+    `npx remotion render remotion/index.ts shorts-${id} "${mp4}" --codec=h264 --props="${propsPath}"`
+  );
+  if (ok) {
+    console.log(`✅ MP4: out/mp4/shorts-${id}.mp4`);
+    return mp4;
+  }
+  console.error(`❌ Render failed: ${id}`);
+  return null;
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+
+async function processTopic(topic, { doTTS, doRender }) {
+  console.log(`\n${'═'.repeat(60)}`);
+  console.log(`📽  ${topic}`);
+
+  // ① Generate
+  const { generateVideo, saveProps } = await import('./generate-video.mjs');
+  const { data, propsPath } = await generateVideo(topic);
+
+  // ② TTS
+  let audioFile = null;
+  if (doTTS && data.transcript) {
+    audioFile = await generateTTS(data.id, data.transcript);
+    if (audioFile) updatePropsWithAudio(data.id, audioFile);
+  }
+
+  // ③ Render
+  if (doRender) {
+    renderVideo(data.id, propsPath);
+  }
+
+  return data.id;
 }
 
 async function main() {
   const args = process.argv.slice(2);
   const topicIdx = args.findIndex((a) => a === '--topic');
-  const doAll = args.includes('--all');
+  const doAll    = args.includes('--all');
+  const noTTS    = args.includes('--no-tts');
   const noRender = args.includes('--no-render');
 
-  if (!topicIdx && !doAll) {
+  if (!doAll && topicIdx === -1) {
     console.log(`
 SHIROKUMA Shorts Pipeline
-==========================
-node scripts/pipeline.mjs --topic "<topic>"        1 video
-node scripts/pipeline.mjs --all                    20 videos
-node scripts/pipeline.mjs --topic "<t>" --no-render  skip render step
+══════════════════════════
+  node scripts/pipeline.mjs --topic "トピック"   1本生成
+  node scripts/pipeline.mjs --all               20本まとめて
+  node scripts/pipeline.mjs --all --no-tts      音声なし
+  node scripts/pipeline.mjs --all --no-render   データのみ
 
-Steps: Claude API → src/lib/videos.ts → out/props/ → Remotion → out/mp4/
+必要な環境変数 (.env.local):
+  ANTHROPIC_API_KEY=sk-ant-...   (台本生成)
+  OPENAI_API_KEY=sk-...          (音声生成、省略可)
+
+出力: out/mp4/shorts-{id}.mp4 → YouTubeにそのままアップ可
     `);
     process.exit(0);
   }
 
-  // Step 1: Generate
-  const generateArgs = ['scripts/generate-video.mjs'];
-  if (doAll) {
-    generateArgs.push('--all');
-  } else {
-    generateArgs.push('--topic', args[topicIdx + 1]);
-  }
+  const { TOPIC_SEEDS } = await import('./generate-video.mjs');
+  const topics = doAll
+    ? TOPIC_SEEDS
+    : [args[topicIdx + 1]];
 
-  console.log('\n📡 STEP 1: Generating video data via Claude API...\n');
-  await run('node', generateArgs);
+  const opts = { doTTS: !noTTS, doRender: !noRender };
 
-  // Step 2: Render (optional)
-  if (!noRender) {
-    console.log('\n🎬 STEP 2: Rendering videos via Remotion...\n');
+  console.log(`\n🚀 SHIROKUMA Shorts Pipeline`);
+  console.log(`   Topics: ${topics.length} | TTS: ${opts.doTTS} | Render: ${opts.doRender}\n`);
 
-    // Find all props files that have corresponding mp4 missing
-    const propsDir = resolve(ROOT, 'out/props');
-    if (existsSync(propsDir)) {
-      const { readdirSync } = await import('fs');
-      const propFiles = readdirSync(propsDir).filter((f) => f.endsWith('.json'));
+  mkdirSync(resolve(ROOT, 'out/mp4'), { recursive: true });
+  mkdirSync(resolve(ROOT, 'out/props'), { recursive: true });
+  mkdirSync(resolve(ROOT, 'public/audio'), { recursive: true });
 
-      for (const propFile of propFiles) {
-        const id = propFile.replace('.json', '');
-        const mp4Path = resolve(ROOT, `out/mp4/shorts-${id}.mp4`);
-        if (existsSync(mp4Path)) {
-          console.log(`⏭  ${id} already rendered, skipping.`);
-          continue;
-        }
-
-        const propsPath = resolve(propsDir, propFile);
-        console.log(`\n▶ Rendering: ${id}`);
-        try {
-          await run('npx', [
-            'remotion', 'render',
-            'remotion/index.ts',
-            `shorts-${id}`,
-            mp4Path,
-            '--codec=h264',
-            `--props=${propsPath}`,
-          ]);
-          console.log(`✅ ${mp4Path}`);
-        } catch (err) {
-          console.error(`❌ Render failed: ${id}`);
-        }
-      }
+  const results = [];
+  for (const topic of topics) {
+    try {
+      const id = await processTopic(topic, opts);
+      results.push({ topic, id, ok: true });
+    } catch (e) {
+      console.error(`❌ Failed: ${topic}\n   ${e.message}`);
+      results.push({ topic, ok: false });
     }
+    // Rate limiting
+    if (topics.length > 1) await new Promise((r) => setTimeout(r, 1000));
   }
 
-  console.log('\n🏁 Pipeline complete!');
-  console.log('📁 MP4 files ready in: out/mp4/');
-  console.log('📤 Upload to YouTube Shorts / TikTok / Instagram Reels');
+  console.log(`\n${'═'.repeat(60)}`);
+  console.log(`🏁 Pipeline complete!\n`);
+  console.log(`✅ Success: ${results.filter((r) => r.ok).length}/${results.length}`);
+  if (opts.doRender) {
+    console.log(`📁 MP4 files: out/mp4/`);
+    console.log(`📤 Ready to upload to YouTube Shorts / TikTok / Instagram Reels`);
+  }
 }
 
 main().catch(console.error);
