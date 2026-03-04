@@ -1,7 +1,17 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Play, Heart, Share2, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, ChevronRight, Download } from 'lucide-react';
 import { getVideoById, getRelatedVideos, axisConfig, formatViews, videos } from '@/lib/videos';
+import dynamic from 'next/dynamic';
+
+const RemotionPlayer = dynamic(() => import('@/components/videos/RemotionPlayer'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full aspect-[9/16] rounded-2xl bg-[#1a1a18] flex items-center justify-center">
+      <div className="text-white/30 text-sm font-sans">Loading player...</div>
+    </div>
+  ),
+});
 
 export async function generateStaticParams() {
   return videos.map((v) => ({ id: v.id }));
@@ -41,46 +51,13 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left: Player */}
           <div className="lg:col-span-2">
-            {/* Video player */}
-            <div className="relative rounded-2xl overflow-hidden bg-[#1a1a18] aspect-[9/16] max-h-[70vh] w-full max-w-sm mx-auto lg:mx-0">
-              {/* Gradient background */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${video.gradient}`}
-                style={{ backgroundColor: '#1a1a18' }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-
-              {/* Thumbnail */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[100px]" style={{ filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.6))' }}>
-                  {video.thumbnail}
-                </span>
-              </div>
-
-              {/* Play button overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Link
-                  href="/videos"
-                  className="w-20 h-20 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/25 transition-colors group"
-                >
-                  <Play size={32} className="text-white ml-1 group-hover:scale-110 transition-transform" fill="white" />
-                </Link>
-              </div>
-
-              {/* Bottom info overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <div
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-semibold mb-2"
-                  style={{ backgroundColor: `${axis.color}25`, color: axis.color, border: `1px solid ${axis.color}40` }}
-                >
-                  {axis.icon} {axis.label}
-                </div>
-                <p className="text-white/60 text-xs font-sans">{video.duration} · {formatViews(video.views)} views</p>
-              </div>
+            {/* Remotion Player */}
+            <div className="w-full max-w-sm mx-auto lg:mx-0">
+              <RemotionPlayer video={video} />
             </div>
 
             {/* Action buttons */}
-            <div className="flex items-center gap-3 mt-4 max-w-sm mx-auto lg:mx-0">
+            <div className="flex items-center gap-3 mt-4 max-w-sm mx-auto lg:mx-0 flex-wrap">
               <button className="flex items-center gap-2 bg-white/10 hover:bg-white/15 px-4 py-2.5 rounded-full text-sm font-sans transition-colors">
                 <Heart size={16} className="text-white" />
                 <span>{formatViews(video.likes)}</span>
@@ -89,13 +66,16 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
                 <Share2 size={16} className="text-white" />
                 <span>Share</span>
               </button>
-              <Link
-                href="/videos"
-                className="flex items-center gap-2 bg-[#c9a96e] hover:bg-[#b8956a] px-4 py-2.5 rounded-full text-sm font-sans font-semibold text-[#1a1a18] transition-colors ml-auto"
+              <div
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-semibold"
+                style={{ backgroundColor: `${axis.color}25`, color: axis.color, border: `1px solid ${axis.color}40` }}
               >
-                <Play size={14} fill="#1a1a18" />
-                Watch in Feed
-              </Link>
+                {axis.icon} {axis.label}
+              </div>
+              <div className="ml-auto flex items-center gap-2 text-white/30 text-xs font-sans">
+                <Download size={12} />
+                <span>npx remotion render shorts-{video.id}</span>
+              </div>
             </div>
 
             {/* Title & description */}
