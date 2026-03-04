@@ -2,16 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Heart, Share2, ChevronRight, Download } from 'lucide-react';
 import { getVideoById, getRelatedVideos, axisConfig, formatViews, videos } from '@/lib/videos';
-import dynamic from 'next/dynamic';
-
-const RemotionPlayer = dynamic(() => import('@/components/videos/RemotionPlayer'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full aspect-[9/16] rounded-2xl bg-[#1a1a18] flex items-center justify-center">
-      <div className="text-white/30 text-sm font-sans">Loading player...</div>
-    </div>
-  ),
-});
+import VideoPlayerClient from '@/components/videos/VideoPlayerClient';
 
 export async function generateStaticParams() {
   return videos.map((v) => ({ id: v.id }));
@@ -53,7 +44,7 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
           <div className="lg:col-span-2">
             {/* Remotion Player */}
             <div className="w-full max-w-sm mx-auto lg:mx-0">
-              <RemotionPlayer video={video} />
+              <VideoPlayerClient video={video} />
             </div>
 
             {/* Action buttons */}
