@@ -4,15 +4,15 @@ import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'FLOOR — House Dance Culture Platform',
+  title: 'HOUSE IS A STATE — 日本発ハウス国際文化プラットフォーム',
   description:
-    'The global platform for house dance culture. Community, history, events, and the philosophy of movement. Built by practitioners, for practitioners.',
-  keywords: 'house dance, footwork, jack, cipher, house music, Chicago, culture, global community',
+    'ハウスミュージックを媒介に、身体・創造・コミュニティを接続する日本発の国際文化プラットフォーム。ジャンルではなく、状態。消費ではなく、共鳴。',
+  keywords: 'house music, house dance, ハウスミュージック, STATE Circle, Ritual Night, ROOTS, culture platform, Japan, Chicago',
   openGraph: {
-    title: 'FLOOR — House Dance Culture Platform',
-    description: 'Where the body speaks. The global home for house dance culture.',
-    siteName: 'FLOOR',
-    locale: 'en_US',
+    title: 'HOUSE IS A STATE',
+    description: 'Not a genre. A state of being. — ジャンルではなく、状態。',
+    siteName: 'HOUSE IS A STATE',
+    locale: 'ja_JP',
     type: 'website',
   },
 };
