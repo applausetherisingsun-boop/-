@@ -13,6 +13,8 @@
     "generate": "node scripts/generate-video.mjs",
     "pipeline": "node scripts/pipeline.mjs",
     "captions": "node scripts/generate-captions.mjs",
+    "combine": "node scripts/combine-sources.mjs",
+    "tts": "node scripts/generate-tts.mjs",
     "upload": "node scripts/upload-youtube.mjs"
   },
   "dependencies": {

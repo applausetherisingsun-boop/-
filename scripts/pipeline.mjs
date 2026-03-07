@@ -3,7 +3,7 @@
  * SHIROKUMA Shorts — One-Command Production Pipeline
  *
  *  ① Claude API    → 台本・データ生成 (claude-sonnet-4-6)
- *  ② OpenAI TTS   → 日本語ナレーション MP3 (public/audio/)
+ *  ② Gemini TTS   → 日本語ナレーション MP3 (public/audio/)  ← Google AI Studio 優先 / OpenAI fallback
  *  ③ OpenAI Whisper→ 単語タイムスタンプ → カラオケ字幕同期
  *  ④ Remotion      → MP4レンダリング 1080×1920
  *  ⑤ YouTube API   → Shorts 自動投稿 (--upload フラグ時)
@@ -193,15 +193,21 @@ SHIROKUMA Shorts Pipeline
   node scripts/pipeline.mjs --topic "..." --upload --schedule "2026-03-10T09:00:00+09:00"
   node scripts/pipeline.mjs --topic "..." --voice ja-JP-Neural2-C  # 女性ボイス
 
-TTS ボイス (OpenAI):
-  onyx     男性・落ち着き  ← デフォルト
+TTS ボイス (Gemini ← 優先):
+  Erinome  女性・自然    ← デフォルト
+  Charon   男性・落ち着き
+  Fenrir   男性・力強い
+  Aoede    女性・明るい
+  Zephyr   女性・爽やか
+
+TTS ボイス (OpenAI ← fallback):
+  onyx     男性・落ち着き
   nova     女性・自然
-  echo     男性・若め
-  shimmer  女性・明るい
 
 必要な環境変数 (.env.local):
-  ANTHROPIC_API_KEY=sk-ant-...   (台本生成 ← Claude API)
-  OPENAI_API_KEY=sk-...          (音声生成 + 字幕同期)
+  ANTHROPIC_API_KEY=sk-ant-...          (台本生成 ← Claude API)
+  OPENAI_API_KEY=sk-...                 (字幕同期 Whisper + TTS fallback)
+  GOOGLE_AI_STUDIO_API_KEY=AIzaSy...   (Gemini TTS ← 優先使用)
   YOUTUBE_CLIENT_ID=...          (投稿時のみ)
   YOUTUBE_CLIENT_SECRET=...      (投稿時のみ)
   YOUTUBE_REFRESH_TOKEN=...      (投稿時のみ → --auth で取得)
