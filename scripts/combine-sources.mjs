@@ -119,7 +119,29 @@ function assignSources(segments, ratios, hasPexels, hasTalkface) {
 // ── セグメントマージ ──────────────────────────────────────────────────────────
 
 /**
- * 友人のスクリプトと同じマージロジック:
+ * ソース割り当て前の時間ベースの事前マージ:
+ *   - 直前が MIN_DUR 未満 → 次に結合（ソース無視）
+ *   - 最後が MIN_DUR 未満 → 前に吸収
+ */
+function premergeByDuration(segments, minDur) {
+  const result = [{ ...segments[0] }];
+  for (const seg of segments.slice(1)) {
+    const prev = result[result.length - 1];
+    if ((prev.end - prev.start) < minDur) {
+      prev.end = seg.end;
+    } else {
+      result.push({ ...seg });
+    }
+  }
+  while (result.length > 1 && (result[result.length - 1].end - result[result.length - 1].start) < minDur) {
+    const last = result.pop();
+    result[result.length - 1].end = last.end;
+  }
+  return result;
+}
+
+/**
+ * ソース割り当て後のマージロジック:
  *   - 隣が同ソース → 結合
  *   - 直前が MIN_DUR 未満 → 隣に吸収
  *   - 最後が MIN_DUR 未満 → 前に吸収
@@ -271,12 +293,13 @@ async function main() {
     process.exit(1);
   }
 
-  // キャプション → セグメント → ソース割り当て → マージ
+  // キャプション → 時間マージ → ソース割り当て → 同一ソースマージ
   const rawSegs = groupCaptionsToSegments(captions);
   console.log(`\n字幕グループ数: ${rawSegs.length}`);
 
-  const assigned = assignSources(rawSegs, ratios, hasPexels, hasTalkface);
-  const segments = mergeSegments(assigned, minDur);
+  const preMerged = premergeByDuration(rawSegs, minDur);
+  const assigned  = assignSources(preMerged, ratios, hasPexels, hasTalkface);
+  const segments  = mergeSegments(assigned, minDur);
 
   const sourceNames = ['main', 'pexels', 'talkface'];
   console.log(`統合セグメント数: ${segments.length}`);
