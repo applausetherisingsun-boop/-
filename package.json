@@ -14,6 +14,7 @@
     "pipeline": "node scripts/pipeline.mjs",
     "captions": "node scripts/generate-captions.mjs",
     "combine": "node scripts/combine-sources.mjs",
+    "pexels": "node scripts/download-pexels.mjs",
     "tts": "node scripts/generate-tts.mjs",
     "upload": "node scripts/upload-youtube.mjs"
   },
