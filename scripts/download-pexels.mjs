@@ -201,7 +201,7 @@ Requires .env.local:
   }
 
   // 検索 & ダウンロード
-  const downloaded = [];
+  const downloaded = []; // {file: string, query: string}
 
   for (const query of queries) {
     if (downloaded.length >= count) break;
@@ -225,20 +225,21 @@ Requires .env.local:
       const file = pickVideoFile(video);
       if (!file) continue;
 
-      const clipPath = resolve(outDir, `clip-${downloaded.length}.mp4`);
+      const clipName = `clip-${downloaded.length}.mp4`;
+      const clipPath = resolve(outDir, clipName);
 
       // すでにダウンロード済みならスキップ
       if (existsSync(clipPath)) {
-        console.log(`   ⏭  clip-${downloaded.length}.mp4 (キャッシュ)`);
-        downloaded.push(clipPath);
+        console.log(`   ⏭  ${clipName} (キャッシュ)`);
+        downloaded.push({ file: clipName, query });
         continue;
       }
 
       try {
-        process.stdout.write(`   ⬇  clip-${downloaded.length}.mp4 (${file.width}×${file.height}) ... `);
+        process.stdout.write(`   ⬇  ${clipName} (${file.width}×${file.height}) ... `);
         await downloadFile(file.link, clipPath);
         console.log('✅');
-        downloaded.push(clipPath);
+        downloaded.push({ file: clipName, query });
       } catch (e) {
         console.log(`❌ ${e.message}`);
       }
@@ -250,15 +251,20 @@ Requires .env.local:
     process.exit(1);
   }
 
-  // クリップを結合
+  // clips.json 保存（combine-sources.mjs がセグメントと照合するために使用）
+  const clipsJsonPath = resolve(outDir, 'clips.json');
+  writeFileSync(clipsJsonPath, JSON.stringify(downloaded, null, 2), 'utf8');
+  console.log(`\n📋 clips.json 保存: ${downloaded.length}本`);
+
+  // クリップを結合（後方互換のため merged.mp4 も維持）
+  const clipPaths = downloaded.map(d => resolve(outDir, d.file));
   if (downloaded.length === 1) {
-    // 1本だけならそのままリネーム
     const { copyFileSync } = await import('fs');
-    copyFileSync(downloaded[0], mergedPath);
+    copyFileSync(clipPaths[0], mergedPath);
   } else {
     console.log(`\n🔧 ${downloaded.length}本を結合中...`);
     try {
-      mergeClips(downloaded, mergedPath);
+      mergeClips(clipPaths, mergedPath);
     } catch (e) {
       console.error(`❌ ffmpeg結合失敗: ${e.message}`);
       process.exit(1);

@@ -172,6 +172,38 @@ function mergeSegments(rawSegments, minDur = 3.0) {
   return segments;
 }
 
+// ── Pexelsクリップ選択 ────────────────────────────────────────────────────────
+
+/**
+ * セグメントのナレーション内容（キャプション単語）を元に
+ * clips.json から最もマッチするクリップを選択する
+ *
+ * スコアリング: セグメントの単語 ∩ クリップのクエリ単語 の重複数
+ */
+function pickBestClip(segment, allCaptions, clipsManifest) {
+  if (!clipsManifest?.length) return null;
+  if (clipsManifest.length === 1) return clipsManifest[0];
+
+  // このセグメントで話されている単語を抽出
+  const spokenWords = allCaptions
+    .filter(c => c.start >= segment.start && c.end <= segment.end + 0.1)
+    .flatMap(c => c.word.toLowerCase().replace(/[^a-z]/g, '').split(/\s+/))
+    .filter(Boolean);
+
+  // クリップごとのスコア計算
+  const scored = clipsManifest.map((clip, idx) => {
+    const queryWords = clip.query.toLowerCase().split(/\s+/).filter(Boolean);
+    let score = 0;
+    for (const qw of queryWords) {
+      if (spokenWords.some(sw => sw.includes(qw) || qw.includes(sw))) score++;
+    }
+    return { clip, score, idx };
+  });
+
+  scored.sort((a, b) => b.score - a.score || a.idx - b.idx);
+  return scored[0].clip;
+}
+
 // ── ffmpeg filter_complex 生成 ────────────────────────────────────────────────
 
 function buildFfmpegCmd({ segments, sourceVideos, outputPath }) {
@@ -184,7 +216,8 @@ function buildFfmpegCmd({ segments, sourceVideos, outputPath }) {
   inputs.push('-i', mainPath);
 
   for (const seg of segments) {
-    const v = sourceVideos[seg.source];
+    // Pexelsセグメントで個別クリップが指定されていればそちらを優先
+    const v = seg.clipPath ?? sourceVideos[seg.source];
     if (!srcMap.has(v)) {
       srcMap.set(v, srcMap.size);
       inputs.push('-i', v);
@@ -200,12 +233,13 @@ function buildFfmpegCmd({ segments, sourceVideos, outputPath }) {
 
   for (let i = 0; i < n; i++) {
     const { start: s, end: e, source } = segments[i];
-    const srcPath = sourceVideos[source];
+    const srcPath = segments[i].clipPath ?? sourceVideos[source];
     const vidIdx = srcMap.get(srcPath);
     const isLast = i === n - 1;
     const dur = e - s;
 
     // Pexels素材はB-roll（音声なし・高解像度）のため特別処理
+    // seg.clipPath が指定されていれば個別クリップを優先使用
     const isPexels = source === SOURCE.PEXELS && srcPath !== mainPath;
     let vidStart, vidEnd;
     if (isPexels) {
@@ -354,6 +388,23 @@ async function main() {
     hasPexels   ? PATHS.pexels   : PATHS.main,
     hasTalkface ? PATHS.talkface : PATHS.main,
   ];
+
+  // clips.json があれば各Pexelsセグメントに最適なクリップを割り当て
+  const clipsJsonPath = resolve(ROOT, `out/pexels/${id}/clips.json`);
+  if (hasPexels && existsSync(clipsJsonPath)) {
+    const clipsManifest = JSON.parse(readFileSync(clipsJsonPath, 'utf8'));
+    const pexelsDir = resolve(ROOT, `out/pexels/${id}`);
+    console.log(`\n🎯 クリップマッチング: ${clipsManifest.length}本のクリップから選択`);
+
+    for (const seg of segments) {
+      if (seg.source !== SOURCE.PEXELS) continue;
+      const best = pickBestClip(seg, captions, clipsManifest);
+      if (best) {
+        seg.clipPath = resolve(pexelsDir, best.file);
+        console.log(`  [${seg.start.toFixed(1)}-${seg.end.toFixed(1)}] → ${best.file} (query: "${best.query}")`);
+      }
+    }
+  }
 
   mkdirSync(resolve(ROOT, 'out/mp4'), { recursive: true });
 
