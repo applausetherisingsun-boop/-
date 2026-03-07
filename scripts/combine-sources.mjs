@@ -25,7 +25,7 @@
  *   out/mp4/shorts-{id}-combined.mp4
  */
 
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { existsSync, readFileSync, mkdirSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -239,7 +239,7 @@ function buildFfmpegCmd({ segments, sourceVideos, outputPath }) {
   return [
     'ffmpeg', '-y',
     ...inputs,
-    '-filter_complex', filters.join(';\n'),
+    '-filter_complex', filters.join(';'),
     '-map', '[vout]',
     '-map', '[aout]',
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p',
@@ -363,9 +363,7 @@ async function main() {
   console.log(`   出力: ${PATHS.output}`);
 
   try {
-    execSync(cmd.map(c => c.includes(' ') || c.includes('\n') ? `"${c}"` : c).join(' '), {
-      stdio: 'inherit',
-    });
+    execFileSync(cmd[0], cmd.slice(1), { stdio: 'inherit' });
   } catch {
     // ffmpeg が stderr に詳細を出すので、ここでは再スローのみ
     console.error('\n❌ ffmpeg 失敗');
