@@ -175,8 +175,13 @@ function mergeSegments(rawSegments, minDur = 3.0) {
 // ── ffmpeg filter_complex 生成 ────────────────────────────────────────────────
 
 function buildFfmpegCmd({ segments, sourceVideos, outputPath }) {
+  // メイン映像を常に最初のinputにする（音声ソースとして使用するため）
+  const mainPath = sourceVideos[SOURCE.MAIN];
   const srcMap = new Map();
   const inputs = [];
+
+  srcMap.set(mainPath, 0);
+  inputs.push('-i', mainPath);
 
   for (const seg of segments) {
     const v = sourceVideos[seg.source];
@@ -186,21 +191,45 @@ function buildFfmpegCmd({ segments, sourceVideos, outputPath }) {
     }
   }
 
+  const mainIdx = 0; // 音声は常にメイン映像から
   const filters = [];
   const n = segments.length;
 
+  // Pexels映像の使用オフセット（同じB-roll素材を再利用しないよう管理）
+  const pexelsOffset = new Map();
+
   for (let i = 0; i < n; i++) {
     const { start: s, end: e, source } = segments[i];
-    const idx = srcMap.get(sourceVideos[source]);
+    const srcPath = sourceVideos[source];
+    const vidIdx = srcMap.get(srcPath);
     const isLast = i === n - 1;
+    const dur = e - s;
 
-    if (isLast) {
-      // 最後のセグメントは end 指定なし（動画末尾まで）
-      filters.push(`[${idx}:v]trim=start=${s.toFixed(3)},setpts=PTS-STARTPTS[v${i}]`);
-      filters.push(`[${idx}:a]atrim=start=${s.toFixed(3)},asetpts=PTS-STARTPTS[a${i}]`);
+    // Pexels素材はB-roll（音声なし・高解像度）のため特別処理
+    const isPexels = source === SOURCE.PEXELS && srcPath !== mainPath;
+    let vidStart, vidEnd;
+    if (isPexels) {
+      vidStart = pexelsOffset.get(srcPath) ?? 0;
+      vidEnd = vidStart + dur;
+      pexelsOffset.set(srcPath, vidEnd);
     } else {
-      filters.push(`[${idx}:v]trim=${s.toFixed(3)}:${e.toFixed(3)},setpts=PTS-STARTPTS[v${i}]`);
-      filters.push(`[${idx}:a]atrim=${s.toFixed(3)}:${e.toFixed(3)},asetpts=PTS-STARTPTS[a${i}]`);
+      vidStart = s;
+      vidEnd = e;
+    }
+
+    // 映像フィルター（Pexelsは解像度をメインに合わせてスケール）
+    const scaleFilter = isPexels ? ',scale=1080:1920' : '';
+    if (isLast) {
+      filters.push(`[${vidIdx}:v]trim=start=${vidStart.toFixed(3)},setpts=PTS-STARTPTS${scaleFilter}[v${i}]`);
+    } else {
+      filters.push(`[${vidIdx}:v]trim=${vidStart.toFixed(3)}:${vidEnd.toFixed(3)},setpts=PTS-STARTPTS${scaleFilter}[v${i}]`);
+    }
+
+    // 音声は常にメイン映像から（Pexelsに音声がないため）
+    if (isLast) {
+      filters.push(`[${mainIdx}:a]atrim=start=${s.toFixed(3)},asetpts=PTS-STARTPTS[a${i}]`);
+    } else {
+      filters.push(`[${mainIdx}:a]atrim=${s.toFixed(3)}:${e.toFixed(3)},asetpts=PTS-STARTPTS[a${i}]`);
     }
   }
 
