@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
+  { href: '/videos', label: 'Shorts', ja: '動画' },
   { href: '/diagnosis', label: 'Diagnosis', ja: '診断' },
   { href: '/science', label: 'Science', ja: 'サイエンス' },
   { href: '/marketplace', label: 'Marketplace', ja: 'マーケット' },
