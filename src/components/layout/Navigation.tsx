@@ -8,6 +8,7 @@ const navLinks = [
   { href: '/diagnosis',   en: 'Diagnosis',   ja: '診断' },
   { href: '/science',     en: 'Science',     ja: '科学' },
   { href: '/marketplace', en: 'Marketplace', ja: '市場' },
+  { href: '/shop',        en: 'Shop',        ja: 'ショップ' },
   { href: '/core',        en: 'CORE',        ja: '会員' },
 ];
 
