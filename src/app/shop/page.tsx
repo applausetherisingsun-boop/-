@@ -72,23 +72,29 @@ const SHOPIFY_PRODUCTS = [
 ];
 
 // ── Japan Affiliate Products ──────────────────────────────────────────────────
-// Replace amazonUrl / rakutenUrl with your actual affiliate links.
+// Platforms:
+//   Rakuten Global Market — global.rakuten.com/en/ (英語対応・直接海外発送)
+//   ZenMarket            — zenmarket.jp (代理購入・175ヵ国対応)
+//   Amazon Global        — amazon.co.jp 国際配送対応商品
+//
+// TODO: Replace search URLs below with exact product affiliate URLs once you
+//       have your Rakuten affiliate tag and ZenMarket partner code.
 const JAPAN_PRODUCTS = [
   {
     id: 'jp1',
     kanji: '豆',
-    name_en: 'Freeze-Dried Natto (Miyagino)',
-    name_ja: '宮城野凍結乾燥納豆',
+    name_en: 'Freeze-Dried Natto',
+    name_ja: '凍結乾燥納豆',
     origin_en: 'Miyagi Prefecture',
     origin_ja: '宮城県',
     desc_en: 'Premium freeze-dried natto retaining full nattokinase activity. No refrigeration needed — perfect for travel.',
     desc_ja: 'ナットウキナーゼ活性を完全保持したフリーズドライ納豆。冷蔵不要で旅行にも最適。',
     axes_en: ['Gut', 'Inflammation'],
     axes_ja: ['腸内', '炎症'],
-    price_ja: '¥2,980',
+    price_ja: '¥2,980~',
     platforms: [
-      { name: 'Amazon', url: 'https://www.amazon.co.jp/dp/ASIN-PLACEHOLDER/?tag=YOUR-AFFILIATE-TAG', color: '#FF9900' },
-      { name: '楽天', url: 'https://item.rakuten.co.jp/STORE/ITEM-PLACEHOLDER/?scid=YOUR-RAKUTEN-TAG', color: '#BF0000' },
+      { name: 'Rakuten Global', url: 'https://global.rakuten.com/en/search/freeze+dried+natto/?f=1&grp=product', color: '#BF0000' },
+      { name: 'ZenMarket', url: 'https://zenmarket.jp/en/rakuten.aspx?q=%E5%87%8D%E7%B5%90%E4%B9%BE%E7%87%A5%E7%B4%8D%E8%B1%86', color: '#1a6b4a' },
     ],
   },
   {
@@ -102,27 +108,27 @@ const JAPAN_PRODUCTS = [
     desc_ja: '宇治の茶農家から直仕入れの本物の抹茶。農薬・重金属検査済み。',
     axes_en: ['Neural', 'Metabolic'],
     axes_ja: ['神経', '代謝'],
-    price_ja: '¥3,500',
+    price_ja: '¥3,500~',
     platforms: [
-      { name: 'Amazon', url: 'https://www.amazon.co.jp/dp/ASIN-PLACEHOLDER/?tag=YOUR-AFFILIATE-TAG', color: '#FF9900' },
-      { name: '楽天', url: 'https://item.rakuten.co.jp/STORE/ITEM-PLACEHOLDER/?scid=YOUR-RAKUTEN-TAG', color: '#BF0000' },
+      { name: 'Rakuten Global', url: 'https://global.rakuten.com/en/search/uji+matcha/?f=1&grp=product', color: '#BF0000' },
+      { name: 'ZenMarket', url: 'https://zenmarket.jp/en/rakuten.aspx?q=%E5%AE%87%E6%B2%BB%E6%8A%B9%E8%8C%B6', color: '#1a6b4a' },
     ],
   },
   {
     id: 'jp3',
     kanji: '菌',
-    name_en: 'Amazake (Fermented Rice Drink)',
+    name_en: 'Amazake (Rice Koji Drink)',
     name_ja: '甘酒（無添加・米糀仕込み）',
     origin_en: 'Niigata Prefecture',
     origin_ja: '新潟県',
-    desc_en: 'Zero-alcohol, zero-sugar amazake brewed from rice koji. Rich in B vitamins, glucose, and gut-feeding oligosaccharides.',
-    desc_ja: 'ノンアルコール・無糖の米糀仕込み甘酒。ビタミンB群・ブドウ糖・腸内育成オリゴ糖が豊富。',
+    desc_en: 'Zero-alcohol, zero-sugar amazake brewed from rice koji. Rich in B vitamins and gut-feeding oligosaccharides.',
+    desc_ja: 'ノンアルコール・無糖の米糀仕込み甘酒。ビタミンB群・腸内育成オリゴ糖が豊富。',
     axes_en: ['Gut', 'Metabolic'],
     axes_ja: ['腸内', '代謝'],
-    price_ja: '¥1,200',
+    price_ja: '¥1,200~',
     platforms: [
-      { name: 'Amazon', url: 'https://www.amazon.co.jp/dp/ASIN-PLACEHOLDER/?tag=YOUR-AFFILIATE-TAG', color: '#FF9900' },
-      { name: '楽天', url: 'https://item.rakuten.co.jp/STORE/ITEM-PLACEHOLDER/?scid=YOUR-RAKUTEN-TAG', color: '#BF0000' },
+      { name: 'Rakuten Global', url: 'https://global.rakuten.com/en/search/amazake/?f=1&grp=product', color: '#BF0000' },
+      { name: 'ZenMarket', url: 'https://zenmarket.jp/en/rakuten.aspx?q=%E7%94%98%E9%85%92+%E7%B1%B3%E7%B3%80', color: '#1a6b4a' },
     ],
   },
   {
@@ -132,48 +138,48 @@ const JAPAN_PRODUCTS = [
     name_ja: '鳴門わかめ（天然乾燥）',
     origin_en: 'Naruto, Tokushima',
     origin_ja: '徳島県・鳴門',
-    desc_en: 'Wild-harvested Naruto wakame, sun-dried with no additives. Fucoidan fraction shows anti-inflammatory and metabolic benefits.',
-    desc_ja: '天然採取・天日干し・無添加の鳴門わかめ。フコイダン成分が抗炎症・代謝改善効果を発揮。',
+    desc_en: 'Wild-harvested Naruto wakame, sun-dried with no additives. Fucoidan shows anti-inflammatory and metabolic benefits.',
+    desc_ja: '天然採取・天日干し・無添加の鳴門わかめ。フコイダンが抗炎症・代謝改善効果を発揮。',
     axes_en: ['Inflammation', 'Metabolic'],
     axes_ja: ['炎症', '代謝'],
-    price_ja: '¥2,200',
+    price_ja: '¥2,200~',
     platforms: [
-      { name: 'Amazon', url: 'https://www.amazon.co.jp/dp/ASIN-PLACEHOLDER/?tag=YOUR-AFFILIATE-TAG', color: '#FF9900' },
-      { name: '楽天', url: 'https://item.rakuten.co.jp/STORE/ITEM-PLACEHOLDER/?scid=YOUR-RAKUTEN-TAG', color: '#BF0000' },
+      { name: 'Rakuten Global', url: 'https://global.rakuten.com/en/search/naruto+wakame/?f=1&grp=product', color: '#BF0000' },
+      { name: 'ZenMarket', url: 'https://zenmarket.jp/en/rakuten.aspx?q=%E9%B3%B4%E9%96%80%E3%82%8F%E3%81%8B%E3%82%81', color: '#1a6b4a' },
     ],
   },
   {
     id: 'jp5',
     kanji: '茸',
     name_en: 'Reishi Mushroom Extract (Dual)',
-    name_ja: '霊芝デュアルエキス（水・アルコール抽出）',
+    name_ja: '霊芝デュアルエキス',
     origin_en: 'Niigata Prefecture',
     origin_ja: '新潟県',
     desc_en: 'Water + alcohol dual-extracted reishi. Triterpenes regulate cortisol; beta-glucans boost NK cell activity.',
     desc_ja: '水とアルコールのデュアル抽出。トリテルペンがコルチゾール調節、βグルカンがNK細胞活性を高める。',
     axes_en: ['Neural', 'Inflammation'],
     axes_ja: ['神経', '炎症'],
-    price_ja: '¥4,800',
+    price_ja: '¥4,800~',
     platforms: [
-      { name: 'Amazon', url: 'https://www.amazon.co.jp/dp/ASIN-PLACEHOLDER/?tag=YOUR-AFFILIATE-TAG', color: '#FF9900' },
-      { name: '楽天', url: 'https://item.rakuten.co.jp/STORE/ITEM-PLACEHOLDER/?scid=YOUR-RAKUTEN-TAG', color: '#BF0000' },
+      { name: 'Rakuten Global', url: 'https://global.rakuten.com/en/search/reishi+extract/?f=1&grp=product', color: '#BF0000' },
+      { name: 'ZenMarket', url: 'https://zenmarket.jp/en/rakuten.aspx?q=%E9%9C%8A%E8%8A%9D+%E3%82%A8%E3%82%AD%E3%82%B9', color: '#1a6b4a' },
     ],
   },
   {
     id: 'jp6',
     kanji: '禅',
-    name_en: 'Bamboo Meditation Cushion (Zafu)',
-    name_ja: '竹製座蒲（禅・瞑想用）',
+    name_en: 'Zafu Meditation Cushion',
+    name_ja: '座蒲（禅・瞑想用）',
     origin_en: 'Kyoto Craft',
     origin_ja: '京都・職人手作り',
-    desc_en: 'Handcrafted zafu cushion from Kyoto artisans. Proper seated posture reduces lumbar strain and sustains longer meditation sessions.',
+    desc_en: 'Handcrafted zafu from Kyoto artisans. Proper posture reduces lumbar strain and sustains longer meditation.',
     desc_ja: '京都職人による手作り座蒲。正しい座位が腰部負荷を軽減し、瞑想の継続時間を延ばす。',
     axes_en: ['Neural', 'Social'],
     axes_ja: ['神経', '社会'],
-    price_ja: '¥8,500',
+    price_ja: '¥8,500~',
     platforms: [
-      { name: 'Amazon', url: 'https://www.amazon.co.jp/dp/ASIN-PLACEHOLDER/?tag=YOUR-AFFILIATE-TAG', color: '#FF9900' },
-      { name: '楽天', url: 'https://item.rakuten.co.jp/STORE/ITEM-PLACEHOLDER/?scid=YOUR-RAKUTEN-TAG', color: '#BF0000' },
+      { name: 'Rakuten Global', url: 'https://global.rakuten.com/en/search/zafu+cushion/?f=1&grp=product', color: '#BF0000' },
+      { name: 'ZenMarket', url: 'https://zenmarket.jp/en/rakuten.aspx?q=%E5%BA%A7%E8%92%B2+%E7%9E%91%E6%83%B3', color: '#1a6b4a' },
     ],
   },
 ];
@@ -217,7 +223,7 @@ export default function ShopPage() {
         <div className="max-w-6xl mx-auto px-8 flex">
           {([
             { key: 'shopify' as Tab, en: 'SHIROKUMA Shop', ja: 'SHIROKUMAショップ', sub: isEn ? 'Ship worldwide · Shopify' : '世界発送 · Shopify' },
-            { key: 'japan'   as Tab, en: 'Japan Picks', ja: '日本セレクト', sub: isEn ? 'Amazon JP · Rakuten' : 'Amazon JP · 楽天' },
+            { key: 'japan'   as Tab, en: 'Japan Picks', ja: '日本セレクト', sub: isEn ? 'Rakuten Global · ZenMarket' : 'Rakuten Global · ZenMarket' },
           ] as const).map((t) => (
             <button
               key={t.key}
@@ -309,8 +315,8 @@ export default function ShopPage() {
           <div className="mb-10 border-l-2 pl-5 py-1" style={{ borderColor: '#a8895a' }}>
             <p className="font-sans text-xs leading-relaxed" style={{ color: '#7a7065' }}>
               {isEn
-                ? 'These products are available on Amazon Japan and Rakuten. Links may be affiliate links — we may earn a small commission at no extra cost to you. All products are hand-selected against SHIROKUMA\'s 6-axis framework.'
-                : '以下の商品はAmazon.co.jpおよび楽天市場で購入できます。アフィリエイトリンクを含む場合があります（購入者への追加費用は一切ありません）。全商品はSHIROKUMAの6軸基準で厳選されています。'}
+                ? 'Browse authentic Japanese products via Rakuten Global Market (ships worldwide, English UI) or ZenMarket (proxy buying, 175 countries). Links may be affiliate links — we earn a small commission at no extra cost to you. All products are hand-selected against SHIROKUMA\'s 6-axis framework.'
+                : '本物の日本商品を、英語対応・直接海外発送のRakuten Global Marketか、175ヵ国対応の代理購入サービスZenMarketで購入できます。アフィリエイトリンクを含む場合があります（購入者への追加費用は一切ありません）。全商品はSHIROKUMAの6軸基準で厳選されています。'}
             </p>
           </div>
 
@@ -370,7 +376,7 @@ export default function ShopPage() {
 
           <div className="mt-8 text-center">
             <p className="font-sans text-[9px] tracking-[0.2em] uppercase" style={{ color: '#c4b49a' }}>
-              {isEn ? '※ Affiliate disclosure · Amazon Associates / Rakuten Affiliate' : '※ アフィリエイト開示 · Amazonアソシエイト / 楽天アフィリエイト'}
+              {isEn ? '※ Affiliate disclosure · Rakuten Global Market / ZenMarket Partner' : '※ アフィリエイト開示 · Rakuten Global Market / ZenMarketパートナー'}
             </p>
           </div>
         </div>
