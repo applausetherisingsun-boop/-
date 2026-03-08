@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #f5f0e8;
+  --cream-light: #faf8f3;
+  --cream-dark: #ede5d8;
+  --gold: #a07830;
+  --gold-light: #c4a05a;
+  --gold-dark: #7a5c20;
+  --text-dark: #2c2417;
+  --text-mid: #5c4a30;
+  --text-light: #8a7060;
+  --text-muted: #b0a090;
+  --dark-bg: #1c1710;
+  --dark-surface: #2a2218;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-gold: var(--gold);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--cream);
+  color: var(--text-dark);
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'ヒラギノ明朝 ProN', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ticker animation */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-track {
+  animation: ticker 30s linear infinite;
+  display: flex;
+  white-space: nowrap;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Gold gradient text */
+.gold-text {
+  background: linear-gradient(135deg, #c4a05a 0%, #a07830 50%, #7a5c20 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Divider ornament */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--gold);
+}
+
+.ornament::before,
+.ornament::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-light));
+}
+
+.ornament::after {
+  background: linear-gradient(to left, transparent, var(--gold-light));
+}
