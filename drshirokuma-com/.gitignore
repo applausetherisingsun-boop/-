@@ -39,9 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-node_modules
-
-# drshirokuma-com subproject
-drshirokuma-com/node_modules/
-drshirokuma-com/.next/
-drshirokuma-com/next-env.d.ts
