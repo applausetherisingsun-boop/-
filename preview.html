@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHIROKUMA — Japan Longevity Science Platform</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafaf8; color: #1a1a18; }
+  a { text-decoration: none; color: inherit; cursor: pointer; }
+
+  /* Nav */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; background: rgba(250,250,248,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(26,26,24,0.08); }
+  .nav-logo { font-weight: 800; font-size: 15px; letter-spacing: 0.15em; }
+  .nav-logo span { color: #c9a96e; }
+  .nav-links { display: flex; gap: 24px; font-size: 13px; color: #5a5a4a; }
+  .nav-links a:hover { color: #c9a96e; }
+  .nav-cta { background: #1a1a18; color: #fafaf8; padding: 8px 20px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+  .nav-cta:hover { background: #c9a96e; color: #1a1a18; }
+  .lang-btn { background: none; border: 1px solid rgba(26,26,24,0.2); padding: 6px 14px; border-radius: 999px; font-size: 12px; cursor: pointer; color: #5a5a4a; margin-left: 12px; }
+
+  /* Hero */
+  .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #fafaf8; text-align: center; padding: 120px 24px 80px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: 80px; right: 40px; width: 384px; height: 384px; border-radius: 50%; background: rgba(201,169,110,0.05); filter: blur(60px); }
+  .hero::after { content: ''; position: absolute; bottom: 80px; left: 40px; width: 320px; height: 320px; border-radius: 50%; background: rgba(122,158,126,0.05); filter: blur(60px); }
+  .hero-inner { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+  .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(26,26,24,0.05); border: 1px solid rgba(26,26,24,0.1); border-radius: 999px; padding: 6px 16px; margin-bottom: 32px; }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #7a9e7e; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .badge span { font-size: 11px; color: rgba(26,26,24,0.7); letter-spacing: 0.2em; text-transform: uppercase; }
+  h1 { font-size: clamp(48px, 8vw, 80px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; }
+  .grad { background: linear-gradient(135deg, #c9a96e 0%, #7a9e7e 50%, #3d5a80 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { font-size: clamp(18px, 3vw, 24px); color: #6a6a5a; margin-bottom: 8px; }
+  .hero-sub2 { font-size: 13px; color: #9a9a8a; letter-spacing: 0.4em; margin-bottom: 40px; }
+  .hero-desc { font-size: 18px; color: #5a5a4a; max-width: 600px; margin: 0 auto 48px; line-height: 1.7; }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 80px; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 12px; background: #1a1a18; color: #fafaf8; padding: 16px 32px; border-radius: 999px; font-size: 15px; font-weight: 600; transition: background 0.3s; }
+  .btn-primary:hover { background: #c9a96e; }
+  .btn-secondary { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(26,26,24,0.2); color: #1a1a18; padding: 16px 32px; border-radius: 999px; font-size: 15px; transition: all 0.3s; }
+  .btn-secondary:hover { border-color: #c9a96e; color: #c9a96e; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 600px; margin: 0 auto; }
+  .stat-value { font-size: 28px; font-weight: 800; color: #1a1a18; }
+  .stat-unit { color: #c9a96e; font-size: 16px; margin-left: 2px; }
+  .stat-label { font-size: 11px; color: #5a5a4a; margin-top: 4px; }
+  .stat-sub { font-size: 10px; color: #9a9a8a; }
+
+  /* Dark section */
+  .dark { background: #1a1a18; color: #e8d5b7; padding: 112px 24px; }
+  .dark-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .section-label { font-size: 11px; color: #c9a96e; letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 16px; }
+  .dark h2 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; color: white; line-height: 1.2; margin-bottom: 24px; }
+  .dark h2 .gold { color: #c9a96e; }
+  .dark p { color: #9a9a7a; font-size: 15px; line-height: 1.8; margin-bottom: 16px; }
+  .wisdom-card { display: flex; gap: 16px; padding: 16px; border-radius: 12px; border: 1px solid #3a3a38; margin-bottom: 12px; transition: border-color 0.3s; }
+  .wisdom-card:hover { border-color: rgba(201,169,110,0.4); }
+  .wisdom-icon { font-size: 24px; flex-shrink: 0; }
+  .wisdom-title { color: white; font-weight: 600; font-size: 15px; }
+  .wisdom-sub { color: #6a6a5a; font-size: 12px; margin-left: 8px; }
+  .wisdom-desc { color: #8a8a7a; font-size: 13px; line-height: 1.6; margin-top: 4px; }
+
+  /* Framework */
+  .framework { background: #fafaf8; padding: 112px 24px; }
+  .section-header { text-align: center; margin-bottom: 64px; }
+  .section-header h2 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 16px; }
+  .section-header p { font-size: 18px; color: #6a6a5a; max-width: 600px; margin: 0 auto; line-height: 1.7; }
+  .axes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
+  .axis-card { padding: 24px; border-radius: 16px; border: 1px solid rgba(232,213,183,0.5); transition: all 0.3s; }
+  .axis-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.1); transform: translateY(-2px); }
+  .axis-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .axis-icon { font-size: 32px; }
+  .axis-num { font-size: 24px; font-weight: 800; color: rgba(26,26,24,0.15); }
+  .axis-title { font-weight: 700; font-size: 17px; margin-bottom: 8px; }
+  .axis-desc { font-size: 13px; color: #5a5a4a; line-height: 1.7; margin-bottom: 16px; }
+  .axis-tag { font-size: 11px; padding: 6px 12px; border-radius: 999px; display: inline-block; }
+
+  /* Author */
+  .author { background: #fafaf8; padding: 112px 24px; }
+  .author-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .author-img { display: flex; justify-content: flex-end; }
+  .author-circle { position: relative; width: 280px; height: 280px; }
+  .author-circle-bg { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #e8d5b7, rgba(201,169,110,0.3)); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(201,169,110,0.2); }
+  .author-emoji { font-size: 80px; }
+  .author-badge { position: absolute; bottom: -16px; right: -16px; background: #1a1a18; color: white; border-radius: 16px; padding: 12px 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+  .author-badge-label { color: #c9a96e; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; }
+  .author-badge-val { font-size: 12px; font-weight: 700; margin-top: 2px; }
+  .author h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; line-height: 1.2; margin-bottom: 24px; }
+  .author p { font-size: 15px; color: #5a5a4a; line-height: 1.8; margin-bottom: 16px; }
+  .author-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+  .author-stat { background: #f5f0e8; border-radius: 12px; padding: 12px; text-align: center; }
+  .author-stat-val { font-size: 20px; font-weight: 800; }
+  .author-stat-unit { color: #c9a96e; font-size: 13px; margin-left: 2px; }
+  .author-stat-label { font-size: 10px; color: #9a9a8a; margin-top: 4px; line-height: 1.4; }
+
+  /* Book */
+  .book { background: #1a1a18; padding: 112px 24px; overflow: hidden; }
+  .book-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .book-cover { display: flex; justify-content: center; }
+  .book-card { width: 200px; background: linear-gradient(160deg, #1a1a18 0%, #2a2015 50%, #1a1a18 100%); border: 1px solid rgba(201,169,110,0.25); border-radius: 8px; padding: 40px 20px 32px 28px; position: relative; box-shadow: 0 40px 80px rgba(0,0,0,0.5); }
+  .book-spine { position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: linear-gradient(to bottom, #c9a96e, #7a9e7e); border-radius: 8px 0 0 8px; }
+  .book-tag { display: inline-block; border: 1px solid rgba(201,169,110,0.5); color: #c9a96e; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; margin-bottom: 24px; }
+  .book-title { color: white; font-weight: 800; font-size: 20px; line-height: 1.3; margin-bottom: 8px; }
+  .book-subtitle { color: #c9a96e; font-size: 10px; line-height: 1.6; margin-bottom: 24px; }
+  .book-divider { width: 32px; height: 1px; background: rgba(201,169,110,0.4); margin-bottom: 16px; }
+  .book-author { color: #8a8a7a; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; }
+  .book-role { color: #6a6a5a; font-size: 8px; margin-top: 4px; }
+  .book-bear { margin-top: 24px; font-size: 32px; opacity: 0.2; }
+  .book-content .dark-label { font-size: 11px; color: #c9a96e; letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 16px; }
+  .book-content h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; color: white; line-height: 1.2; margin-bottom: 24px; }
+  .book-content h2 .gold { color: #c9a96e; }
+  .book-content > p { color: #9a9a7a; font-size: 15px; line-height: 1.8; margin-bottom: 32px; }
+  .chapters { margin-bottom: 32px; }
+  .chapter { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #3a3a38; }
+  .chapter-num { color: rgba(201,169,110,0.5); font-size: 12px; font-weight: 700; width: 24px; flex-shrink: 0; }
+  .chapter-title { color: #8a8a7a; font-size: 14px; }
+  .btn-outline-gold { display: inline-flex; align-items: center; gap: 12px; border: 1px solid #c9a96e; color: #c9a96e; padding: 14px 32px; border-radius: 999px; font-size: 14px; font-weight: 600; transition: all 0.3s; }
+  .btn-outline-gold:hover { background: #c9a96e; color: #1a1a18; }
+
+  /* Products */
+  .products { background: #f5f0e8; padding: 112px 24px; }
+  .products-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  .products-header h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; line-height: 1.2; }
+  .view-all { font-size: 14px; color: #c9a96e; border-bottom: 1px solid #c9a96e; padding-bottom: 2px; }
+  .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1100px; margin: 0 auto; }
+  .product-card { background: #fafaf8; border-radius: 16px; overflow: hidden; border: 1px solid rgba(232,213,183,0.5); transition: all 0.3s; }
+  .product-card:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+  .product-img { height: 192px; background: linear-gradient(135deg, rgba(232,213,183,0.3), rgba(201,169,110,0.1)); display: flex; align-items: center; justify-content: center; font-size: 64px; }
+  .product-body { padding: 20px; }
+  .product-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .product-name { font-weight: 700; font-size: 14px; color: #1a1a18; line-height: 1.4; }
+  .product-price { color: #c9a96e; font-weight: 700; font-size: 16px; flex-shrink: 0; margin-left: 8px; }
+  .product-origin { font-size: 12px; color: #9a9a8a; margin-bottom: 12px; }
+  .product-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .product-tag { font-size: 10px; background: rgba(26,26,24,0.05); color: rgba(26,26,24,0.6); padding: 3px 10px; border-radius: 999px; }
+  .product-note { font-size: 12px; color: #7a7a6a; margin-bottom: 16px; }
+  .product-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .score-bar { display: flex; align-items: center; gap: 6px; }
+  .score-track { width: 64px; height: 6px; background: #e8d5b7; border-radius: 999px; overflow: hidden; }
+  .score-fill { height: 100%; background: #7a9e7e; border-radius: 999px; }
+  .score-num { font-size: 10px; color: #7a9e7e; font-weight: 700; }
+  .view-link { font-size: 12px; color: #c9a96e; }
+
+  /* Membership */
+  .membership { background: #1a1a18; padding: 112px 24px; text-align: center; }
+  .membership h2 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; color: white; margin-bottom: 24px; }
+  .membership h2 .gold { color: #c9a96e; }
+  .membership > .inner > p { color: #9a9a7a; font-size: 17px; max-width: 600px; margin: 0 auto 40px; line-height: 1.7; }
+  .inner { max-width: 900px; margin: 0 auto; }
+  .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+  .plan { background: #2a2a28; border: 1px solid #3a3a38; border-radius: 16px; padding: 24px; text-align: left; transition: border-color 0.3s; }
+  .plan:hover { border-color: rgba(201,169,110,0.4); }
+  .plan-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .plan-tier { font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+  .plan-price { font-size: 24px; font-weight: 800; color: white; }
+  .plan-period { font-size: 12px; color: #6a6a5a; }
+  .plan-features { margin-bottom: 24px; }
+  .plan-feature { display: flex; align-items: flex-start; gap: 8px; color: #8a8a7a; font-size: 14px; padding: 6px 0; }
+  .plan-check { margin-top: 2px; }
+  .plan-btn { display: block; width: 100%; text-align: center; padding: 12px; border-radius: 999px; font-size: 14px; font-weight: 600; transition: all 0.3s; }
+
+  /* CTA */
+  .cta { background: #fafaf8; padding: 96px 24px; text-align: center; }
+  .cta h2 { font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 24px; }
+  .cta-question { font-size: clamp(24px, 4vw, 36px); color: #c9a96e; font-style: italic; margin-bottom: 16px; }
+  .cta p { font-size: 16px; color: #6a6a5a; margin-bottom: 40px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .btn-gold { display: inline-flex; align-items: center; gap: 12px; background: #c9a96e; color: #1a1a18; padding: 20px 48px; border-radius: 999px; font-size: 18px; font-weight: 800; transition: background 0.3s; box-shadow: 0 20px 40px rgba(201,169,110,0.3); }
+  .btn-gold:hover { background: #b8956a; }
+  .cta-note { font-size: 12px; color: #9a9a8a; margin-top: 16px; }
+
+  /* Footer */
+  footer { background: #1a1a18; color: #6a6a5a; padding: 48px 32px; text-align: center; font-size: 13px; }
+  footer .footer-logo { font-size: 18px; font-weight: 800; color: white; letter-spacing: 0.15em; margin-bottom: 8px; }
+  footer .footer-logo span { color: #c9a96e; }
+
+  @media (max-width: 768px) {
+    .dark-inner, .author-inner, .book-inner { grid-template-columns: 1fr; }
+    .axes-grid, .products-grid, .plans { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    nav .nav-links { display: none; }
+    .products-header { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">白熊 <span>SHIROKUMA</span></div>
+  <div style="display:flex; align-items:center;">
+    <div class="nav-links">
+      <a href="#">Science</a>
+      <a href="#">6 Axes</a>
+      <a href="#">Diagnosis</a>
+      <a href="#">Marketplace</a>
+      <a href="#">Core</a>
+    </div>
+    <button class="lang-btn" onclick="toggleLang(this)">EN / JP</button>
+    <a href="#" class="btn-primary nav-cta" style="margin-left:16px;">Free Diagnosis</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge">
+      <div class="badge-dot"></div>
+      <span>Japan-Origin · Evidence-Based · Global</span>
+    </div>
+    <h1>Aging is not<br><span class="grad">destiny.</span></h1>
+    <p class="hero-sub">It's a civilizational disease.</p>
+    <p class="hero-sub2">老化は「宿命」ではなく「文明病」である</p>
+    <p class="hero-desc">SHIROKUMA decodes Japan's 120-year longevity secrets — washoku, fermentation, onsen, zen — through the lens of inflammation science, microbiome research, and circadian biology.</p>
+    <div class="btn-group">
+      <a href="#" class="btn-primary">Take Free 6-Axis Diagnosis →</a>
+      <a href="#" class="btn-secondary">🧪 Explore the Science</a>
+    </div>
+    <div class="stats">
+      <div><div class="stat-value">87<span class="stat-unit">yrs</span></div><div class="stat-label">Japan avg. lifespan</div><div class="stat-sub">世界最長寿国</div></div>
+      <div><div class="stat-value">6<span class="stat-unit">axes</span></div><div class="stat-label">Diagnostic framework</div><div class="stat-sub">科学的フレームワーク</div></div>
+      <div><div class="stat-value">100+<span class="stat-unit" style="font-size:13px"> papers</span></div><div class="stat-label">Evidence base</div><div class="stat-sub">査読論文</div></div>
+      <div><div class="stat-value">1<span class="stat-unit"> platform</span></div><div class="stat-label">Japan → World</div><div class="stat-sub">日本発世界へ</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Dark: East meets West -->
+<section class="dark">
+  <div class="dark-inner">
+    <div>
+      <p class="section-label">The Problem</p>
+      <h2>Western science,<br>Eastern wisdom.<br><span class="gold">Finally united.</span></h2>
+      <p>Peter Attia and Andrew Huberman have transformed how the West thinks about longevity. But they're missing something: Japan has been living this way for centuries.</p>
+      <p>Okinawan centenarians don't follow protocols. They eat fermented soybean. They walk to their fields. They gather with neighbors. Their "ikigai" keeps them alive. SHIROKUMA translates this ancient operating system into evidence-based, actionable science.</p>
+    </div>
+    <div>
+      <div class="wisdom-card">
+        <div class="wisdom-icon">🍱</div>
+        <div>
+          <div><span class="wisdom-title">Washoku</span><span class="wisdom-sub">/ Japanese diet</span></div>
+          <div class="wisdom-desc">Naturally anti-inflammatory. Rich in polyphenols, omega-3s, fermented foods. Associated with lower IL-6 and CRP.</div>
+        </div>
+      </div>
+      <div class="wisdom-card">
+        <div class="wisdom-icon">🌲</div>
+        <div>
+          <div><span class="wisdom-title">Shinrin-yoku</span><span class="wisdom-sub">/ Forest bathing</span></div>
+          <div class="wisdom-desc">Clinically proven to lower cortisol, elevate NK cell activity, and reduce sympathetic nervous system activation.</div>
+        </div>
+      </div>
+      <div class="wisdom-card">
+        <div class="wisdom-icon">♨️</div>
+        <div>
+          <div><span class="wisdom-title">Onsen</span><span class="wisdom-sub">/ Hot spring therapy</span></div>
+          <div class="wisdom-desc">Thermal stress activates heat shock proteins (HSP70), promotes mitochondrial biogenesis, improves insulin sensitivity.</div>
+        </div>
+      </div>
+      <div class="wisdom-card">
+        <div class="wisdom-icon">🧘</div>
+        <div>
+          <div><span class="wisdom-title">Zen</span><span class="wisdom-sub">/ Meditation practice</span></div>
+          <div class="wisdom-desc">Reduces cortisol, lengthens telomeres, activates BDNF, and rewires prefrontal cortex for stress resilience.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 Axes -->
+<section class="framework">
+  <div class="section-header">
+    <p class="section-label" style="color:#c9a96e; font-size:11px; letter-spacing:0.4em; text-transform:uppercase; margin-bottom:16px;">The Framework</p>
+    <h2>6 Axes of Longevity</h2>
+    <p>Aging is not one problem. It's six interconnected systems, each requiring a different key.</p>
+  </div>
+  <div class="axes-grid">
+    <div class="axis-card" style="background:#fff4f0;">
+      <div class="axis-head"><span class="axis-icon">🔥</span><span class="axis-num">01</span></div>
+      <div class="axis-title">Inflammation</div>
+      <p class="axis-desc">Chronic low-grade inflammation is the silent driver of aging. Japanese washoku and fermented foods naturally suppress NF-κB pathways.</p>
+      <span class="axis-tag" style="color:#e07b54; background:rgba(224,123,84,0.08);">Anti-inflammatory diet · Intestinal barrier · CRP markers</span>
+    </div>
+    <div class="axis-card" style="background:#f0f6f1;">
+      <div class="axis-head"><span class="axis-icon">🦠</span><span class="axis-num">02</span></div>
+      <div class="axis-title">Gut Microbiome</div>
+      <p class="axis-desc">Japan's fermentation culture — miso, natto, kimchi — seeds the gut with longevity-associated Bifidobacterium and Lactobacillus species.</p>
+      <span class="axis-tag" style="color:#7a9e7e; background:rgba(122,158,126,0.08);">Microbiome diversity · Short-chain fatty acids · Leaky gut</span>
+    </div>
+    <div class="axis-card" style="background:#f4f2ff;">
+      <div class="axis-head"><span class="axis-icon">🧠</span><span class="axis-num">03</span></div>
+      <div class="axis-title">Neural / Stress</div>
+      <p class="axis-desc">HPA axis dysregulation accelerates telomere shortening. Zen meditation and shinrin-yoku activate the parasympathetic system.</p>
+      <span class="axis-tag" style="color:#7b68ee; background:rgba(123,104,238,0.08);">Cortisol · HPA axis · Neuroplasticity · Forest bathing</span>
+    </div>
+    <div class="axis-card" style="background:#fffbf0;">
+      <div class="axis-head"><span class="axis-icon">⚡</span><span class="axis-num">04</span></div>
+      <div class="axis-title">Metabolic</div>
+      <p class="axis-desc">Mitochondrial biogenesis through thermal stress (onsen) and movement. Hara hachi bu naturally activates mTOR suppression.</p>
+      <span class="axis-tag" style="color:#e8a838; background:rgba(232,168,56,0.08);">Mitochondria · mTOR · Insulin sensitivity · Onsen therapy</span>
+    </div>
+    <div class="axis-card" style="background:#f0f4f8;">
+      <div class="axis-head"><span class="axis-icon">🌙</span><span class="axis-num">05</span></div>
+      <div class="axis-title">Hormonal / Sleep</div>
+      <p class="axis-desc">Circadian rhythm alignment drives melatonin, growth hormone, and cortisol cycles. Light exposure patterns deeply affect biological aging.</p>
+      <span class="axis-tag" style="color:#3d5a80; background:rgba(61,90,128,0.08);">Circadian biology · Melatonin · Sleep architecture · Blue light</span>
+    </div>
+    <div class="axis-card" style="background:#faf6ef;">
+      <div class="axis-head"><span class="axis-icon">🤝</span><span class="axis-num">06</span></div>
+      <div class="axis-title">Social / Ikigai</div>
+      <p class="axis-desc">Ikigai — reason for being — is measurably correlated with longevity in Okinawan centenarians. Social bonds activate oxytocin anti-aging pathways.</p>
+      <span class="axis-tag" style="color:#c9a96e; background:rgba(201,169,110,0.08);">Ikigai · Oxytocin · Loneliness biomarkers · Community</span>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:48px;">
+    <a href="#" class="btn-primary" style="display:inline-flex;">Diagnose All 6 Axes — Free →</a>
+  </div>
+</section>
+
+<!-- Author -->
+<section class="author">
+  <div class="author-inner">
+    <div class="author-img">
+      <div class="author-circle">
+        <div class="author-circle-bg">
+          <div style="text-align:center;">
+            <div class="author-emoji">🐻‍❄️</div>
+            <span style="font-size:11px; color:rgba(26,26,24,0.4); letter-spacing:0.3em; text-transform:uppercase; font-family:sans-serif;">SHIROKUMA</span>
+          </div>
+        </div>
+        <div class="author-badge">
+          <div class="author-badge-label">Active Physician</div>
+          <div class="author-badge-val">放射線科医</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="section-label" style="color:#c9a96e; font-size:11px; letter-spacing:0.4em; text-transform:uppercase; margin-bottom:16px;">About the Author</p>
+      <h2>Written by a doctor<br><span class="grad">who lives the science.</span></h2>
+      <p>NISHI is a practicing radiologist and evidence-based longevity researcher based in Japan. At 36, he maintains 9.7% body fat with 5 years of structured training — not because of genetics, but because of a meticulously science-tested protocol.</p>
+      <p>His mission: to be the first Japanese physician to scientifically decode why Japan is the world's longest-lived nation — and deliver that knowledge to a global audience.</p>
+      <div class="author-stats">
+        <div class="author-stat"><span class="author-stat-val">36</span><span class="author-stat-unit">yrs</span><div class="author-stat-label">Age · Body fat 9.7%</div></div>
+        <div class="author-stat"><span class="author-stat-val">5+</span><span class="author-stat-unit">yrs</span><div class="author-stat-label">Training & research</div></div>
+        <div class="author-stat"><span class="author-stat-val">100+</span><span class="author-stat-unit">refs</span><div class="author-stat-label">Peer-reviewed sources</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Book -->
+<section class="book">
+  <div class="book-inner">
+    <div class="book-cover">
+      <div style="position:relative;">
+        <div style="position:absolute;inset:0;background:rgba(201,169,110,0.15);filter:blur(40px);transform:scale(1.2);border-radius:50%;"></div>
+        <div class="book-card">
+          <div class="book-spine"></div>
+          <div class="book-tag">Coming 2026</div>
+          <div class="book-title">Aging Is a<br>Civilization<br>Disease</div>
+          <div class="book-subtitle">The SHIROKUMA<br>6-Axis Anti-Aging<br>Complete Guide</div>
+          <div class="book-divider"></div>
+          <div class="book-author">NISHI · SHIROKUMA</div>
+          <div class="book-role">M.D., Radiologist</div>
+          <div class="book-bear">🐻‍❄️</div>
+        </div>
+      </div>
+    </div>
+    <div class="book-content">
+      <p class="dark-label">The Book</p>
+      <h2>The manifesto<br>for the<br><span class="gold">anti-aging era.</span></h2>
+      <p>7 chapters. 6 axes. One complete protocol to live like a polar bear — not a salmon.</p>
+      <div class="chapters">
+        <div class="chapter"><span class="chapter-num">01</span><span class="chapter-title">Inflammaging — The Silent Engine</span></div>
+        <div class="chapter"><span class="chapter-num">02</span><span class="chapter-title">The Gut Microbiome Axis</span></div>
+        <div class="chapter"><span class="chapter-num">03</span><span class="chapter-title">Neural & Stress Regulation</span></div>
+        <div class="chapter"><span class="chapter-num">04</span><span class="chapter-title">Metabolic Axis & Mitochondria</span></div>
+        <div class="chapter"><span class="chapter-num">05</span><span class="chapter-title">Hormonal Axis & Circadian Biology</span></div>
+        <div class="chapter"><span class="chapter-num">06</span><span class="chapter-title">Social Axis & Ikigai</span></div>
+        <div class="chapter"><span class="chapter-num">07</span><span class="chapter-title">The Japanese Integration Protocol</span></div>
+      </div>
+      <a href="#" class="btn-outline-gold">Preview the Science →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Products -->
+<section class="products">
+  <div class="products-header">
+    <div>
+      <p class="section-label" style="color:#c9a96e; font-size:11px; letter-spacing:0.4em; text-transform:uppercase; margin-bottom:16px;">Certified Marketplace</p>
+      <h2>Products backed<br>by the 6 axes</h2>
+    </div>
+    <a href="#" class="view-all">View all products →</a>
+  </div>
+  <div class="products-grid">
+    <div class="product-card">
+      <div class="product-img">🫘</div>
+      <div class="product-body">
+        <div class="product-top"><div class="product-name">Natto Starter Culture Kit</div><div class="product-price">$34</div></div>
+        <div class="product-origin">Ibaraki Prefecture</div>
+        <div class="product-tags"><span class="product-tag">Gut</span><span class="product-tag">Inflammation</span></div>
+        <div class="product-note">Fermented · Vitamin K2 · Nattokinase</div>
+        <div class="product-bottom">
+          <div class="score-bar"><div class="score-track"><div class="score-fill" style="width:94%"></div></div><span class="score-num">94</span></div>
+          <a href="#" class="view-link">View →</a>
+        </div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img">🍵</div>
+      <div class="product-body">
+        <div class="product-top"><div class="product-name">Ceremonial Matcha Reserve</div><div class="product-price">$58</div></div>
+        <div class="product-origin">Uji, Kyoto</div>
+        <div class="product-tags"><span class="product-tag">Neural</span><span class="product-tag">Metabolic</span></div>
+        <div class="product-note">L-Theanine · EGCG · Shade-grown</div>
+        <div class="product-bottom">
+          <div class="score-bar"><div class="score-track"><div class="score-fill" style="width:91%"></div></div><span class="score-num">91</span></div>
+          <a href="#" class="view-link">View →</a>
+        </div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img">♨️</div>
+      <div class="product-body">
+        <div class="product-top"><div class="product-name">Hinoki Bath Salt Blend</div><div class="product-price">$42</div></div>
+        <div class="product-origin">Kiso Valley, Nagano</div>
+        <div class="product-tags"><span class="product-tag">Metabolic</span><span class="product-tag">Neural</span></div>
+        <div class="product-note">HSP activation · Aromatic · Onsen-style</div>
+        <div class="product-bottom">
+          <div class="score-bar"><div class="score-track"><div class="score-fill" style="width:88%"></div></div><span class="score-num">88</span></div>
+          <a href="#" class="view-link">View →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Membership -->
+<section class="membership">
+  <div class="inner">
+    <p class="section-label" style="color:#c9a96e; font-size:11px; letter-spacing:0.4em; text-transform:uppercase; margin-bottom:24px;">CORE Membership</p>
+    <h2>Go deeper.<br><span class="gold">Stay ahead.</span></h2>
+    <p style="color:#9a9a7a; font-size:17px; max-width:600px; margin:0 auto 40px; line-height:1.7;">Access peer-reviewed research digests, unlimited re-diagnostics, and personalized protocol updates — all filtered through Japan's longevity lens.</p>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-head">
+          <span class="plan-tier" style="color:#c9a96e;">CORE</span>
+          <div><span class="plan-price">¥1,980</span><span class="plan-period">/month</span></div>
+        </div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="plan-check" style="color:#c9a96e;">✓</span>Monthly research digest (peer-reviewed)</div>
+          <div class="plan-feature"><span class="plan-check" style="color:#c9a96e;">✓</span>Unlimited 6-axis re-diagnostics</div>
+          <div class="plan-feature"><span class="plan-check" style="color:#c9a96e;">✓</span>Personalized product recommendations</div>
+          <div class="plan-feature"><span class="plan-check" style="color:#c9a96e;">✓</span>Community access</div>
+        </div>
+        <a href="#" class="plan-btn" style="background:rgba(201,169,110,0.12); color:#c9a96e; border:1px solid rgba(201,169,110,0.25);">Join CORE →</a>
+      </div>
+      <div class="plan">
+        <div class="plan-head">
+          <span class="plan-tier" style="color:#7a9e7e;">PRIME</span>
+          <div><span class="plan-price">¥4,980</span><span class="plan-period">/month</span></div>
+        </div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="plan-check" style="color:#7a9e7e;">✓</span>Everything in CORE</div>
+          <div class="plan-feature"><span class="plan-check" style="color:#7a9e7e;">✓</span>Weekly research deep-dives</div>
+          <div class="plan-feature"><span class="plan-check" style="color:#7a9e7e;">✓</span>Direct Q&A with researchers</div>
+          <div class="plan-feature"><span class="plan-check" style="color:#7a9e7e;">✓</span>Early marketplace access</div>
+          <div class="plan-feature"><span class="plan-check" style="color:#7a9e7e;">✓</span>B2B certification pathway</div>
+        </div>
+        <a href="#" class="plan-btn" style="background:rgba(122,158,126,0.12); color:#7a9e7e; border:1px solid rgba(122,158,126,0.25);">Join PRIME →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="cta">
+  <h2>Your longevity journey<br>starts with one question:</h2>
+  <p class="cta-question">Where are you aging fastest?</p>
+  <p>Our free 6-axis diagnosis reveals your biological weak points — and shows you the Japanese science to address them.</p>
+  <a href="#" class="btn-gold">Begin Free Diagnosis →</a>
+  <p class="cta-note">5 minutes · No signup required · 25 questions</p>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">白熊 <span>SHIROKUMA</span></div>
+  <p style="margin-top:8px;">© 2026 SHIROKUMA · drshirokuma.online · Japan Longevity Science Platform</p>
+</footer>
+
+</body>
+</html>
