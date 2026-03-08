@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import '@fontsource/syne/700.css';
+import '@fontsource/syne/800.css';
 import './globals.css';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
@@ -26,14 +28,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className="antialiased">
         {/* Grain texture overlay */}
         <div className="grain-overlay" aria-hidden="true" />
