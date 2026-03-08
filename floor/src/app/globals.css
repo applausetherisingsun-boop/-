@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────
+   Design Tokens
+───────────────────────────────────────────── */
 :root {
-  --bg: #050505;
+  --bg: #060606;
   --surface: #0d0d0d;
   --surface-2: #141414;
   --fg: #ede8e0;
@@ -9,9 +12,11 @@
   --fg-faint: #3a3628;
   --gold: #c9a96e;
   --gold-light: #e8c88a;
+  --gold-bright: #f5d898;
   --amber: #d4881f;
   --border: rgba(255, 255, 255, 0.05);
-  --border-gold: rgba(201, 169, 110, 0.14);
+  --border-gold: rgba(201, 169, 110, 0.15);
+  --glow-gold: rgba(201, 169, 110, 0.10);
 }
 
 @theme inline {
@@ -19,7 +24,7 @@
   --color-foreground: var(--fg);
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; }
 
 html { scroll-behavior: smooth; }
 
@@ -30,15 +35,52 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ─────────────────────────────────────────────
+   Grain Texture Overlay
+───────────────────────────────────────────── */
+.grain-overlay {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.038;
+  pointer-events: none;
+  z-index: 9999;
+  animation: grain 8s steps(10) infinite;
+}
+
+/* ─────────────────────────────────────────────
+   Scrollbar
+───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 2px; }
-::-webkit-scrollbar-track { background: #0a0a0a; }
-::-webkit-scrollbar-thumb { background: var(--gold); }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+}
+
+/* ─────────────────────────────────────────────
+   Typography Utilities
+───────────────────────────────────────────── */
+.font-display {
+  font-family: 'Syne', 'Helvetica Neue', Arial, sans-serif;
+}
 
 .text-gold {
-  background: linear-gradient(120deg, #c9a96e 0%, #e8c88a 100%);
+  background: linear-gradient(
+    110deg,
+    #c9a96e 0%,
+    #f0d898 35%,
+    #ffe5a0 50%,
+    #f0d898 65%,
+    #c9a96e 100%
+  );
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: shimmer 5s linear infinite;
 }
 
 .text-amber {
@@ -48,9 +90,67 @@ body {
   background-clip: text;
 }
 
+/* ─────────────────────────────────────────────
+   Glow & Visual Helpers
+───────────────────────────────────────────── */
+.glow-gold {
+  box-shadow:
+    0 0 20px rgba(201, 169, 110, 0.12),
+    0 0 60px rgba(201, 169, 110, 0.06);
+}
+
+.border-glow-gold {
+  border-color: rgba(201, 169, 110, 0.35);
+  box-shadow: 0 0 20px rgba(201, 169, 110, 0.08);
+}
+
+/* Card hover spotlight effect */
+.card-hover {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.card-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(201, 169, 110, 0.04), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.card-hover:hover::after { opacity: 1; }
+
+/* ─────────────────────────────────────────────
+   Keyframes
+───────────────────────────────────────────── */
+@keyframes grain {
+  0%   { transform: translate(0%, 0%); }
+  10%  { transform: translate(-4%, -6%); }
+  20%  { transform: translate(-10%, 4%); }
+  30%  { transform: translate(5%, -10%); }
+  40%  { transform: translate(-5%, 14%); }
+  50%  { transform: translate(-12%, 5%); }
+  60%  { transform: translate(13%, 0%); }
+  70%  { transform: translate(0%, 10%); }
+  80%  { transform: translate(-14%, 0%); }
+  90%  { transform: translate(10%, 5%); }
+  100% { transform: translate(5%, 0%); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes ticker {
@@ -60,14 +160,40 @@ body {
 
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.8); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
 }
 
-.animate-fade-up { animation: fadeUp 0.7s ease-out forwards; }
-.animate-ticker  { animation: ticker 40s linear infinite; }
-.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.05); }
+}
 
-.delay-100 { animation-delay: 0.1s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-300 { animation-delay: 0.3s; }
-.delay-500 { animation-delay: 0.5s; }
+@keyframes line-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ─────────────────────────────────────────────
+   Animation Classes
+───────────────────────────────────────────── */
+.animate-fade-up {
+  opacity: 0;
+  animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 1.2s ease forwards;
+}
+
+.animate-ticker      { animation: ticker 40s linear infinite; }
+.animate-pulse-dot   { animation: pulse-dot 2.5s ease-in-out infinite; }
+.animate-glow-breathe { animation: glow-breathe 4s ease-in-out infinite; }
+
+.delay-100  { animation-delay: 0.10s; }
+.delay-200  { animation-delay: 0.20s; }
+.delay-300  { animation-delay: 0.35s; }
+.delay-400  { animation-delay: 0.50s; }
+.delay-500  { animation-delay: 0.65s; }
+.delay-700  { animation-delay: 0.90s; }
+.delay-1000 { animation-delay: 1.20s; }

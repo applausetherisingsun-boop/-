@@ -25,17 +25,17 @@ export default function Navigation() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? 'bg-[#050505]/96 backdrop-blur-md border-b border-white/5'
+          ? 'bg-[#060606]/95 backdrop-blur-xl border-b border-white/[0.06]'
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="group flex flex-col leading-none">
-          <span className="text-[#ede8e0] font-black text-sm tracking-[0.22em] group-hover:text-[#c9a96e] transition-colors">
+          <span className="font-display text-[#ede8e0] font-black text-sm tracking-[0.22em] group-hover:text-[#c9a96e] transition-colors duration-300">
             HOUSE IS A STATE
           </span>
-          <span className="text-[#3a3628] text-[8px] tracking-[0.45em] uppercase">
+          <span className="text-[#2e2820] text-[8px] tracking-[0.45em] uppercase">
             Not a genre. A state of being.
           </span>
         </Link>
@@ -44,19 +44,19 @@ export default function Navigation() {
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href} className="group flex flex-col items-center gap-0.5">
-              <span className="text-[#7a7060] text-sm font-medium tracking-wide hover:text-[#ede8e0] transition-colors">
+              <span className="text-[#6a6050] text-sm font-medium tracking-wide hover:text-[#ede8e0] transition-colors duration-300">
                 {link.label}
               </span>
-              <span className="text-[#3a3628] text-[9px] tracking-widest group-hover:text-[#5a5040] transition-colors">
+              <span className="text-[#2e2820] text-[8px] tracking-[0.4em] group-hover:text-[#4a4030] transition-colors duration-300 uppercase">
                 {link.sub}
               </span>
             </Link>
           ))}
           <Link
             href="/circle"
-            className="border border-[#c9a96e]/40 text-[#c9a96e] px-6 py-2.5 text-sm font-bold tracking-wide hover:bg-[#c9a96e] hover:text-[#050505] transition-all duration-300"
+            className="border border-[#c9a96e]/40 text-[#c9a96e] px-6 py-2.5 text-xs font-bold tracking-[0.3em] uppercase hover:bg-[#c9a96e] hover:text-[#060606] hover:border-[#c9a96e] transition-all duration-300"
           >
-            Enter Circle →
+            Enter Circle
           </Link>
         </div>
 
