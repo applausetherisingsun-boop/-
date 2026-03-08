@@ -4,16 +4,17 @@ import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'SHIROKUMA — Japan Longevity Science Platform',
+  metadataBase: new URL('https://shirokuma-biohack.com'),
+  title: 'HOUSE IS A STATE — 日本発ハウス国際文化プラットフォーム',
   description:
-    'Decoding Japan\'s longevity wisdom through science. Evidence-based anti-aging platform built on 6 axes: inflammation, gut microbiome, neural, metabolic, hormonal, and social health.',
-  keywords: 'anti-aging, longevity, Japan, microbiome, inflammation, ikigai, evidence-based health',
+    'ハウスミュージックを媒介に、身体・創造・コミュニティを接続する日本発の国際文化プラットフォーム。ジャンルではなく、状態。消費ではなく、共鳴。',
+  keywords: 'house music, house dance, ハウスミュージック, STATE Circle, Ritual Night, ROOTS, culture platform, Japan, Chicago',
   openGraph: {
-    title: 'SHIROKUMA — Japan Longevity Science Platform',
-    description: 'Decoding Japan\'s 120-year longevity secrets through modern science.',
-    url: 'https://drshirokuma.online',
-    siteName: 'SHIROKUMA',
-    locale: 'en_US',
+    title: 'HOUSE IS A STATE',
+    description: 'Not a genre. A state of being. — ジャンルではなく、状態。',
+    siteName: 'HOUSE IS A STATE',
+    url: 'https://shirokuma-biohack.com',
+    locale: 'ja_JP',
     type: 'website',
   },
 };

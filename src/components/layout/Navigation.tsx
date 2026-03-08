@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-  { href: '/diagnosis', label: 'Diagnosis', ja: '診断' },
-  { href: '/science', label: 'Science', ja: 'サイエンス' },
-  { href: '/marketplace', label: 'Marketplace', ja: 'マーケット' },
-  { href: '/core', label: 'CORE', ja: 'メンバー' },
+  { href: '/about',  label: 'About',       sub: 'コンセプト' },
+  { href: '/roots',  label: 'ROOTS',        sub: '歴史と起源' },
+  { href: '/ritual', label: 'Ritual Night', sub: '体験' },
+  { href: '/circle', label: 'STATE Circle', sub: 'コミュニティ' },
 ];
 
 export default function Navigation() {
@@ -16,7 +16,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -25,80 +25,66 @@ export default function Navigation() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? 'bg-[#fafaf8]/95 backdrop-blur-md shadow-sm border-b border-[#e8d5b7]/50'
+          ? 'bg-[#050505]/96 backdrop-blur-md border-b border-white/5'
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#c9a96e] to-[#7a9e7e] flex items-center justify-center">
-            <span className="text-white font-bold text-sm">白</span>
-          </div>
-          <div className="flex flex-col leading-none">
-            <span className="text-[#1a1a18] font-bold text-lg tracking-widest font-sans">
-              SHIROKUMA
-            </span>
-            <span className="text-[#c9a96e] text-[9px] tracking-[0.3em] uppercase font-sans">
-              Longevity Science
-            </span>
-          </div>
+        <Link href="/" className="group flex flex-col leading-none">
+          <span className="text-[#ede8e0] font-black text-sm tracking-[0.22em] group-hover:text-[#c9a96e] transition-colors">
+            HOUSE IS A STATE
+          </span>
+          <span className="text-[#3a3628] text-[8px] tracking-[0.45em] uppercase">
+            Not a genre. A state of being.
+          </span>
         </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="group flex flex-col items-center gap-0.5"
-            >
-              <span className="text-[#1a1a18] font-sans text-sm font-medium hover:text-[#c9a96e] transition-colors">
+            <Link key={link.href} href={link.href} className="group flex flex-col items-center gap-0.5">
+              <span className="text-[#7a7060] text-sm font-medium tracking-wide hover:text-[#ede8e0] transition-colors">
                 {link.label}
               </span>
-              <span className="text-[#9a9a8a] text-[9px] tracking-widest">
-                {link.ja}
+              <span className="text-[#3a3628] text-[9px] tracking-widest group-hover:text-[#5a5040] transition-colors">
+                {link.sub}
               </span>
             </Link>
           ))}
           <Link
-            href="/diagnosis"
-            className="bg-[#1a1a18] text-[#fafaf8] px-6 py-2.5 rounded-full text-sm font-sans font-medium hover:bg-[#c9a96e] transition-all duration-300"
+            href="/circle"
+            className="border border-[#c9a96e]/40 text-[#c9a96e] px-6 py-2.5 text-sm font-bold tracking-wide hover:bg-[#c9a96e] hover:text-[#050505] transition-all duration-300"
           >
-            Start Free Diagnosis →
+            Enter Circle →
           </Link>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
+        {/* Mobile */}
+        <button className="md:hidden p-2 text-[#7a7060]" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#fafaf8] border-t border-[#e8d5b7]/50 px-6 py-6 flex flex-col gap-4">
+        <div className="md:hidden bg-[#0d0d0d] border-t border-white/5 px-6 py-6 flex flex-col gap-5">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="flex justify-between items-center py-2 border-b border-[#e8d5b7]/30"
+              className="flex justify-between items-center py-2 border-b border-white/5"
               onClick={() => setIsOpen(false)}
             >
-              <span className="font-sans font-medium">{link.label}</span>
-              <span className="text-[#9a9a8a] text-xs">{link.ja}</span>
+              <span className="text-[#ede8e0] font-medium">{link.label}</span>
+              <span className="text-[#3a3628] text-xs">{link.sub}</span>
             </Link>
           ))}
           <Link
-            href="/diagnosis"
-            className="bg-[#1a1a18] text-[#fafaf8] px-6 py-3 rounded-full text-center font-sans font-medium mt-2"
+            href="/circle"
+            className="border border-[#c9a96e]/40 text-[#c9a96e] px-6 py-3 text-center font-bold tracking-wide mt-2"
             onClick={() => setIsOpen(false)}
           >
-            Start Free Diagnosis →
+            Enter Circle →
           </Link>
         </div>
       )}
