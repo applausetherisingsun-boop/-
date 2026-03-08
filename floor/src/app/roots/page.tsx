@@ -77,13 +77,13 @@ const elements = [
 
 export default function RootsPage() {
   return (
-    <div className="min-h-screen bg-[#050505] pt-28">
+    <div className="min-h-screen bg-[#060606] pt-28">
 
       {/* Header */}
       <section className="px-6 pb-20">
         <div className="max-w-5xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-6">ROOTS — 歴史と起源</p>
-          <h1 className="text-[clamp(3rem,9vw,6rem)] font-black text-[#ede8e0] leading-[0.88] tracking-tight mb-8">
+          <h1 className="text-[clamp(3rem,9vw,6rem)] font-display font-display font-black text-[#ede8e0] leading-[0.88] tracking-tight mb-8">
             シカゴ発。<br />
             <span className="text-gold">すべてはそこから。</span>
           </h1>
@@ -99,7 +99,7 @@ export default function RootsPage() {
         <div className="max-w-5xl mx-auto">
           <div className="space-y-0">
             {timeline.map((item, i) => (
-              <div key={i} className="flex gap-8 group border-b border-white/5 hover:border-white/10 transition-colors">
+              <div key={i} className="flex gap-8 group border-b border-white/[0.05] hover:border-white/10 transition-colors">
                 <div className="hidden md:flex flex-col min-w-[5rem] pt-8 pb-8">
                   <span className="text-[#c9a96e] font-black text-xs">{item.year}</span>
                   <span className="text-[#3a3628] text-[9px] mt-1">{item.city}</span>
@@ -119,14 +119,14 @@ export default function RootsPage() {
       </section>
 
       {/* 4 Elements */}
-      <section className="py-28 px-6 bg-[#0d0d0d] border-y border-white/5">
+      <section className="py-28 px-6 bg-[#0d0d0d] border-y border-white/[0.05]">
         <div className="max-w-7xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-14">4 Elements</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5">
             {elements.map((el) => (
               <div key={el.name} className="bg-[#0d0d0d] p-10 hover:bg-[#141414] transition-colors group">
                 <div className="mb-5">
-                  <h3 className="text-[#ede8e0] font-black text-2xl group-hover:text-[#c9a96e] transition-colors">
+                  <h3 className="text-[#ede8e0] font-display font-black text-2xl group-hover:text-[#c9a96e] transition-colors">
                     {el.name}
                   </h3>
                   <p className="text-[#3a3628] text-xs tracking-widest mt-1">{el.ja}</p>
@@ -139,10 +139,10 @@ export default function RootsPage() {
       </section>
 
       {/* Philosophy */}
-      <section className="py-28 px-6 bg-[#050505]">
+      <section className="py-28 px-6 bg-[#060606]">
         <div className="max-w-5xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-8">Philosophy</p>
-          <h2 className="text-3xl md:text-4xl font-black text-[#ede8e0] mb-10 leading-tight">
+          <h2 className="text-3xl md:text-4xl font-display font-black text-[#ede8e0] mb-10 leading-tight">
             サイファーで起きることは<br />エンターテインメントではない
           </h2>
           <div className="grid md:grid-cols-2 gap-12">
@@ -159,7 +159,7 @@ export default function RootsPage() {
                 { label: 'サイファーは儀式空間', body: '円はパフォーマンス空間ではない。平等主義的で、現在進行形で、脆弱性を要求する。準備ができたときに入り、持っているものを与え、フロアが返してくるものを受け取る。これは比喩ではない。言語以前から存在する社会的技術だ。' },
                 { label: '身体は楽器', body: 'ハウスダンスは身体を形作られるオブジェクトとしてではなく、演奏される楽器として扱う。音楽があなたを通じて演奏される。ダンサーと音楽の区別が溶ける。実践者が「その中にいる」と呼ぶ瞬間。' },
               ].map((p) => (
-                <div key={p.label} className="border border-white/5 p-6 hover:border-[#c9a96e]/20 transition-colors">
+                <div key={p.label} className="border border-white/[0.05] p-6 hover:border-[#c9a96e]/20 transition-colors">
                   <p className="text-[#c9a96e] text-[9px] tracking-widest uppercase mb-3">{p.label}</p>
                   <p className="text-[#7a7060] text-sm leading-relaxed">{p.body}</p>
                 </div>
@@ -170,9 +170,9 @@ export default function RootsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6 bg-[#0d0d0d] border-t border-white/5 text-center">
+      <section className="py-20 px-6 bg-[#0d0d0d] border-t border-white/[0.05] text-center">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-black text-[#ede8e0] mb-4">
+          <h2 className="text-2xl font-display font-black text-[#ede8e0] mb-4">
             文化は生きている。<br />あなたの身体の中で。
           </h2>
           <p className="text-[#7a7060] mb-8">
@@ -181,13 +181,13 @@ export default function RootsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/ritual"
-              className="border border-[#c9a96e]/50 text-[#c9a96e] px-8 py-4 font-bold hover:bg-[#c9a96e] hover:text-[#050505] transition-all"
+              className="border border-[#c9a96e]/50 text-[#c9a96e] px-8 py-4 font-bold hover:bg-[#c9a96e] hover:text-[#060606] transition-all"
             >
               Ritual Night →
             </Link>
             <Link
               href="/circle"
-              className="border border-white/8 text-[#7a7060] px-8 py-4 hover:text-[#ede8e0] transition-all"
+              className="border border-white/[0.07] text-[#7a7060] px-8 py-4 hover:text-[#ede8e0] transition-all"
             >
               STATE Circle →
             </Link>

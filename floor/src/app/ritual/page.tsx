@@ -43,13 +43,13 @@ const design = [
 
 export default function RitualPage() {
   return (
-    <div className="min-h-screen bg-[#050505] pt-28">
+    <div className="min-h-screen bg-[#060606] pt-28">
 
       {/* Header */}
       <section className="px-6 pb-20">
         <div className="max-w-5xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-6">Ritual Night</p>
-          <h1 className="text-[clamp(2.5rem,8vw,6rem)] font-black text-[#ede8e0] leading-[0.88] tracking-tight mb-8">
+          <h1 className="text-[clamp(2.5rem,8vw,6rem)] font-display font-display font-black text-[#ede8e0] leading-[0.88] tracking-tight mb-8">
             身体状態の<br />
             <span className="text-gold">変化を売る。</span>
           </h1>
@@ -65,7 +65,7 @@ export default function RitualPage() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-px bg-white/5">
             {design.map((d) => (
-              <div key={d.label} className="bg-[#050505] p-8 hover:bg-[#0d0d0d] transition-colors">
+              <div key={d.label} className="bg-[#060606] p-8 hover:bg-[#0c0c0c] transition-colors">
                 <p className="text-[#3a3628] text-[9px] tracking-widest uppercase mb-2">{d.label}</p>
                 <p className="text-[#c9a96e] font-black text-sm mb-1">{d.value}</p>
                 <p className="text-[#5a5040] text-[10px]">{d.note}</p>
@@ -76,12 +76,12 @@ export default function RitualPage() {
       </section>
 
       {/* What is it */}
-      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/5">
+      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/[0.05]">
         <div className="max-w-5xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-12">Q&A</p>
           <div className="space-y-0">
             {what.map((item) => (
-              <div key={item.q} className="border-b border-white/5 py-8 hover:border-white/10 transition-colors">
+              <div key={item.q} className="border-b border-white/[0.05] py-8 hover:border-white/10 transition-colors">
                 <h3 className="text-[#ede8e0] font-bold mb-4">{item.q}</h3>
                 <p className="text-[#7a7060] text-sm leading-relaxed max-w-2xl">{item.a}</p>
               </div>
@@ -91,7 +91,7 @@ export default function RitualPage() {
       </section>
 
       {/* Upcoming */}
-      <section className="py-20 px-6 bg-[#050505]">
+      <section className="py-20 px-6 bg-[#060606]">
         <div className="max-w-5xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-12">Upcoming</p>
           {events.map((ev) => (
@@ -101,7 +101,7 @@ export default function RitualPage() {
                   <p className="text-[#c9a96e] text-[9px] tracking-widest uppercase mb-2">
                     {ev.n} · {ev.theme}
                   </p>
-                  <h2 className="text-[#ede8e0] font-black text-2xl">{ev.title}</h2>
+                  <h2 className="text-[#ede8e0] font-display font-black text-2xl">{ev.title}</h2>
                 </div>
                 <span className="border border-[#c9a96e]/30 text-[#c9a96e] px-3 py-1 text-[10px] font-bold tracking-widest">
                   {ev.status}
@@ -124,7 +124,7 @@ export default function RitualPage() {
               <p className="text-[#7a7060] text-sm leading-relaxed max-w-2xl mb-8">{ev.description}</p>
               <Link
                 href="/circle"
-                className="inline-flex items-center gap-2 border border-[#c9a96e]/40 text-[#c9a96e] px-6 py-3 text-sm font-bold hover:bg-[#c9a96e] hover:text-[#050505] transition-all"
+                className="inline-flex items-center gap-2 border border-[#c9a96e]/40 text-[#c9a96e] px-6 py-3 text-sm font-bold hover:bg-[#c9a96e] hover:text-[#060606] transition-all"
               >
                 STATE Circle メンバーが優先通知を受け取る →
               </Link>
@@ -134,7 +134,7 @@ export default function RitualPage() {
       </section>
 
       {/* Philosophy quote */}
-      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/5 text-center">
+      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/[0.05] text-center">
         <div className="max-w-3xl mx-auto">
           <p className="text-[#5a5040] text-[9px] tracking-[0.5em] uppercase mb-8">Why Small</p>
           <blockquote className="text-xl md:text-2xl text-[#7a7060] leading-relaxed mb-8 font-light">
@@ -151,9 +151,9 @@ export default function RitualPage() {
       </section>
 
       {/* Join CTA */}
-      <section className="py-20 px-6 bg-[#050505] text-center">
+      <section className="py-20 px-6 bg-[#060606] text-center">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-black text-[#ede8e0] mb-4">
+          <h2 className="text-2xl font-display font-black text-[#ede8e0] mb-4">
             通知を受け取る
           </h2>
           <p className="text-[#7a7060] mb-8">
@@ -161,7 +161,7 @@ export default function RitualPage() {
           </p>
           <Link
             href="/circle"
-            className="inline-flex items-center gap-2 border border-[#c9a96e]/50 text-[#c9a96e] px-10 py-4 font-black tracking-wide hover:bg-[#c9a96e] hover:text-[#050505] transition-all"
+            className="inline-flex items-center gap-2 border border-[#c9a96e]/50 text-[#c9a96e] px-10 py-4 font-black tracking-wide hover:bg-[#c9a96e] hover:text-[#060606] transition-all"
           >
             Enter STATE Circle →
           </Link>

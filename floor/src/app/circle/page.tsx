@@ -55,13 +55,13 @@ const forCreators = [
 
 export default function CirclePage() {
   return (
-    <div className="min-h-screen bg-[#050505] pt-28">
+    <div className="min-h-screen bg-[#060606] pt-28">
 
       {/* Header */}
       <section className="px-6 pb-20">
         <div className="max-w-5xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-6">STATE Circle</p>
-          <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-black text-[#ede8e0] leading-[0.9] tracking-tight mb-8">
+          <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-display font-display font-black text-[#ede8e0] leading-[0.9] tracking-tight mb-8">
             AIはコミュニティを<br />
             <span className="text-gold">代替できない。</span>
           </h1>
@@ -78,8 +78,8 @@ export default function CirclePage() {
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-10">設計原則</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5">
             {principles.map((p) => (
-              <div key={p.label} className="bg-[#050505] p-8 hover:bg-[#0d0d0d] transition-colors">
-                <h3 className="text-[#c9a96e] font-black text-base mb-2">{p.label}</h3>
+              <div key={p.label} className="bg-[#060606] p-8 hover:bg-[#0c0c0c] transition-colors">
+                <h3 className="text-[#c9a96e] font-display font-black text-base mb-2">{p.label}</h3>
                 <p className="text-[#5a5040] text-xs leading-relaxed">{p.body}</p>
               </div>
             ))}
@@ -88,7 +88,7 @@ export default function CirclePage() {
       </section>
 
       {/* Tiers */}
-      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/5">
+      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/[0.05]">
         <div className="max-w-5xl mx-auto">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-12">Membership Tiers</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -98,7 +98,7 @@ export default function CirclePage() {
                 className={`p-10 border transition-colors ${
                   tier.highlight
                     ? 'border-[#c9a96e]/40 bg-[#c9a96e]/3'
-                    : 'border-white/8 bg-[#0d0d0d]'
+                    : 'border-white/[0.07] bg-[#0d0d0d]'
                 }`}
               >
                 <div className="flex justify-between items-start mb-2">
@@ -143,12 +143,12 @@ export default function CirclePage() {
       </section>
 
       {/* For Creators */}
-      <section className="py-20 px-6 bg-[#050505]">
+      <section className="py-20 px-6 bg-[#060606]">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-start">
             <div>
               <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-6">For Creators</p>
-              <h2 className="text-2xl md:text-3xl font-black text-[#ede8e0] mb-6 leading-tight">
+              <h2 className="text-2xl md:text-3xl font-display font-black text-[#ede8e0] mb-6 leading-tight">
                 クリエイターがプラットフォームに<br />依存するのではなく、<br />
                 <span className="text-gold">プラットフォームが<br />クリエイターに依存する。</span>
               </h2>
@@ -158,7 +158,7 @@ export default function CirclePage() {
             </div>
             <div className="space-y-3">
               {forCreators.map((item) => (
-                <div key={item.label} className="flex gap-5 border-b border-white/5 pb-4">
+                <div key={item.label} className="flex gap-5 border-b border-white/[0.05] pb-4">
                   <p className="text-[#c9a96e] font-bold text-sm w-24 flex-shrink-0">{item.label}</p>
                   <p className="text-[#7a7060] text-sm leading-relaxed">{item.detail}</p>
                 </div>
@@ -169,10 +169,10 @@ export default function CirclePage() {
       </section>
 
       {/* Early Access Form */}
-      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/5">
+      <section className="py-20 px-6 bg-[#0d0d0d] border-y border-white/[0.05]">
         <div className="max-w-md mx-auto text-center">
           <p className="text-[#c9a96e] text-[9px] tracking-[0.5em] uppercase mb-6">Phase 1 — Early Access</p>
-          <h2 className="text-2xl font-black text-[#ede8e0] mb-4">先着100名の登録</h2>
+          <h2 className="text-2xl font-display font-black text-[#ede8e0] mb-4">先着100名の登録</h2>
           <p className="text-[#7a7060] text-sm leading-relaxed mb-10">
             Phase 1ローンチ時の優先案内。Ritual Night Vol.01の優先予約。クリエイターの方は審査の上、招待。
           </p>
@@ -180,14 +180,14 @@ export default function CirclePage() {
             <input
               type="text"
               placeholder="お名前 / Name"
-              className="bg-transparent border border-white/8 text-[#ede8e0] placeholder-[#3a3628] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors"
+              className="bg-transparent border border-white/[0.07] text-[#ede8e0] placeholder-[#3a3628] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors"
             />
             <input
               type="email"
               placeholder="メールアドレス / Email"
-              className="bg-transparent border border-white/8 text-[#ede8e0] placeholder-[#3a3628] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors"
+              className="bg-transparent border border-white/[0.07] text-[#ede8e0] placeholder-[#3a3628] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors"
             />
-            <select className="bg-[#050505] border border-white/8 text-[#7a7060] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors">
+            <select className="bg-[#060606] border border-white/[0.07] text-[#7a7060] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors">
               <option value="">あなたの立場 / Your role</option>
               <option>DJ / Producer</option>
               <option>ダンサー / Dancer</option>
@@ -198,7 +198,7 @@ export default function CirclePage() {
             <input
               type="text"
               placeholder="都市 / City"
-              className="bg-transparent border border-white/8 text-[#ede8e0] placeholder-[#3a3628] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors"
+              className="bg-transparent border border-white/[0.07] text-[#ede8e0] placeholder-[#3a3628] px-4 py-3 text-sm outline-none focus:border-[#c9a96e]/40 transition-colors"
             />
           </div>
           <button className="w-full bg-[#c9a96e] text-[#050505] py-4 font-black tracking-wide hover:bg-[#e8c88a] transition-all flex items-center justify-center gap-2">
@@ -212,7 +212,7 @@ export default function CirclePage() {
       </section>
 
       {/* Final statement */}
-      <section className="py-20 px-6 bg-[#050505] text-center">
+      <section className="py-20 px-6 bg-[#060606] text-center">
         <div className="max-w-3xl mx-auto">
           <p className="text-2xl text-[#7a7060] leading-relaxed mb-6 font-light">
             「場を作る。あとは育つ。」
