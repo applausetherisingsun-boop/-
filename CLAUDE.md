@@ -6,13 +6,13 @@
 
 | サイト | ドメイン | Vercel プロジェクト | ブランチ |
 |--------|----------|---------------------|----------|
-| 海外向け抗老化 | `drshirokuma.com` / `www.drshirokuma.com` | `drshirokuma-com` | `claude/setup-shirokuma-project-Nasw6` |
-| 国内向け抗老化 | `drshirokuma.online` | `shirokuma-abroad` | `claude/deploy-drshirokuma-vercel-gFCu4` |
-| ハウスミュージック | `shirokuma-biohack.com` | `deepundergroundhousenation` | `claude/house-dance-platform-z2Clp` |
+| 日本発・海外向けアンチエイジング | `drshirokuma.online` | `shirokuma-abroad` | `claude/deploy-drshirokuma-vercel-gFCu4` |
+| 国内向けアンチエイジング | `drshirokuma.com` / `www.drshirokuma.com` | `drshirokuma-com` | `claude/setup-shirokuma-project-Nasw6` |
+| ハウスカルチャープラットフォーム | `shirokuma-biohack.com` | `deepundergroundhousenation` | `claude/house-dance-platform-z2Clp` |
 
 ## ディレクトリ構成
 
-- `/` (ルート) → 海外向けサイト (`drshirokuma.com`) のソースコード
+- `/` (ルート) → 国内向けサイト (`drshirokuma.com`) のソースコード
   - `src/app/page.tsx` — ホームページ
   - `src/components/layout/Navigation.tsx` — ナビゲーション
   - `src/contexts/LanguageContext.tsx` — EN/JP 言語切替
