@@ -1,32 +1,78 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Cormorant+SC:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@300;400;500&family=Noto+Serif+JP:wght@200;300;400&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #0e0e0c;
-  --accent-gold: #b8964a;
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --ink:        #1c1917;        /* 墨 — deep warm black */
+  --ash:        #3d3832;        /* 灰 — medium charcoal */
+  --stone:      #7a7065;        /* 石 — warm grey */
+  --sand:       #c4b49a;        /* 砂 — muted sand */
+  --washi:      #f5f0e8;        /* 和紙 — warm parchment */
+  --silk:       #faf8f4;        /* 絹 — almost white */
+  --gold:       #a8895a;        /* 金 — restrained gold */
+  --moss:       #5a7a5e;        /* 苔 — deep moss green */
+  --indigo:     #2e3f5c;        /* 藍 — deep indigo */
+
+  --font-serif: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+  --font-sc:    'Cormorant SC', 'Cormorant Garamond', serif;
+  --font-sans:  -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--silk);
+  --color-foreground: var(--ink);
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--silk);
+  color: var(--ink);
   font-family: var(--font-serif);
+  font-weight: 300;
+  line-height: 1.8;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
 }
+
+/* scrollbar — almost invisible */
 ::-webkit-scrollbar { width: 1px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #0e0e0c20; }
+::-webkit-scrollbar-thumb { background: var(--sand); }
+
+/* selection */
+::selection { background: var(--ink); color: var(--silk); }
+
+/* utility classes */
 .font-serif { font-family: var(--font-serif); }
+.font-sc    { font-family: var(--font-sc); }
 .font-sans  { font-family: var(--font-sans); }
-::selection { background: #0e0e0c; color: #ffffff; }
-section { transition: opacity 0.3s ease; }
+
+/* Zen divider — thin horizontal rule */
+.zen-rule {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--sand);
+  margin: 0 auto;
+}
+
+/* subtle fade-in for sections */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.9s ease both; }
+
+/* brush stroke separator */
+.brush-stroke {
+  display: inline-block;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--sand), transparent);
+}
