@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ExternalLink } from 'lucide-react';
 
-type StoreKey = 'all' | 'becos' | 'musubi' | 'mcrafts' | 'suigenkyo';
+type StoreKey = 'all' | 'becos' | 'musubi';
 
 // ── Partner Stores ────────────────────────────────────────────────────────────
 const STORES = [
@@ -35,34 +35,6 @@ const STORES = [
     storeUrl: 'https://musubikiln.com/',
     color: '#5a6e3a',
     kanji: '結',
-  },
-  {
-    key: 'mcrafts' as StoreKey,
-    name: 'Master Craftsmanship',
-    tagline_en: 'Made in Japan · Artisan Stories',
-    tagline_ja: 'メイドインジャパン · 職人の物語',
-    desc_en: 'Japanese craftsmanship with cultural story behind every piece. Hundreds of years of tradition.',
-    desc_ja: '一点一点に文化的背景を持つ日本の工芸品。数百年の伝統を継ぐ職人の技。',
-    commission: '要確認',
-    platform: 'GoAffPro',
-    affiliateUrl: 'https://mcraftsmanship.goaffpro.com/',
-    storeUrl: 'https://mcraftsmanship.com/',
-    color: '#7a5a3a',
-    kanji: '匠',
-  },
-  {
-    key: 'suigenkyo' as StoreKey,
-    name: 'Suigenkyo',
-    tagline_en: 'Finest Japanese Traditional Crafts',
-    tagline_ja: '最上の日本伝統工芸',
-    desc_en: '100+ contracted craftspeople. High-end traditional crafts with direct artisan relationships.',
-    desc_ja: '100人以上の職人と直接契約。職人との信頼関係から生まれた最高級の伝統工芸品。',
-    commission: '要問い合わせ',
-    platform: 'Direct B2B',
-    affiliateUrl: 'https://suigenkyo.store/en-us/pages/for-company',
-    storeUrl: 'https://suigenkyo.store/en-us',
-    color: '#8a5060',
-    kanji: '源',
   },
 ];
 
@@ -115,21 +87,6 @@ const CRAFT_PRODUCTS = [
     url: 'https://musubikiln.com/collections/bizen-yaki',
   },
   {
-    id: 'c4',
-    store: 'mcrafts' as StoreKey,
-    kanji: '桧',
-    name_en: 'Hinoki Cypress Cutting Board',
-    name_ja: '木曽檜まな板',
-    origin_en: 'Kiso Valley, Nagano',
-    origin_ja: '長野県・木曽谷',
-    desc_en: 'Hand-planed Kiso hinoki board with natural antimicrobial oils (α-pinene). Self-healing surface, phytoncide release during use promotes parasympathetic calm.',
-    desc_ja: '天然抗菌オイル（αピネン）含有の木曽檜まな板。使用中のフィトンチッド放散が副交感神経を穏やかに刺激。',
-    axes_en: ['Gut', 'Neural'],
-    axes_ja: ['腸内', '神経'],
-    price_range: '¥6,000~',
-    url: 'https://mcraftsmanship.com/',
-  },
-  {
     id: 'c5',
     store: 'becos' as StoreKey,
     kanji: '切',
@@ -143,51 +100,6 @@ const CRAFT_PRODUCTS = [
     axes_ja: ['神経', '社会'],
     price_range: '¥12,000~',
     url: 'https://en.thebecos.com/collections/edo-kiriko',
-  },
-  {
-    id: 'c6',
-    store: 'suigenkyo' as StoreKey,
-    kanji: '組',
-    name_en: 'Kumihimo Silk Braided Accessory',
-    name_ja: '組紐（シルク・京都）',
-    origin_en: 'Kyoto',
-    origin_ja: '京都',
-    desc_en: 'Hand-braided kumihimo silk from Kyoto. The meditative rhythm of braiding itself is a form of moving zen — and the finished piece carries that intention.',
-    desc_ja: '京都産手組の組紐。組む瞑想的リズムそのものが動禅の一形態。完成品にはその意図が宿る。',
-    axes_en: ['Neural', 'Social'],
-    axes_ja: ['神経', '社会'],
-    price_range: '¥10,000~',
-    url: 'https://suigenkyo.store/en-us/collections/all-product',
-  },
-  {
-    id: 'c7',
-    store: 'mcrafts' as StoreKey,
-    kanji: '竹',
-    name_en: 'Handwoven Bamboo Steamer',
-    name_ja: '職人編み 竹製蒸籠',
-    origin_en: 'Kyushu',
-    origin_ja: '九州',
-    desc_en: 'Traditional bamboo seiru steamer. Steam cooking preserves heat-sensitive nutrients (vitamins C, B) and reduces Maillard reaction compounds linked to inflammaging.',
-    desc_ja: '伝統的な竹製蒸籠。蒸し調理は熱感受性栄養素（ビタミンC・B）を保護し、炎症老化に関連するメイラード反応を低減。',
-    axes_en: ['Gut', 'Inflammation'],
-    axes_ja: ['腸内', '炎症'],
-    price_range: '¥4,500~',
-    url: 'https://mcraftsmanship.com/',
-  },
-  {
-    id: 'c8',
-    store: 'suigenkyo' as StoreKey,
-    kanji: '染',
-    name_en: 'Kyoto Nishijin Silk Scarf',
-    name_ja: '西陣織 シルクスカーフ',
-    origin_en: 'Kyoto Nishijin',
-    origin_ja: '京都・西陣',
-    desc_en: 'Woven by fifth-generation Nishijin weavers. Silk sericin has demonstrated effects on slow-wave sleep quality — and the craft itself embodies ikigai.',
-    desc_ja: '五代目西陣職人が織る絹スカーフ。シルクセリシンは徐波睡眠の質改善効果が実証済み。職人の仕事そのものが生きがいを体現する。',
-    axes_en: ['Hormonal', 'Social'],
-    axes_ja: ['ホルモン', '社会'],
-    price_range: '¥18,000~',
-    url: 'https://suigenkyo.store/en-us/collections/all-product',
   },
   {
     id: 'c9',
@@ -240,8 +152,8 @@ export default function CraftsPage() {
           </h1>
           <p className="font-serif font-light text-lg max-w-2xl" style={{ color: '#7a7065' }}>
             {isEn
-              ? 'Every item is selected for its connection to Japan\'s longevity culture — the ritual, the material, the maker. Curated from four trusted partner stores.'
-              : '全商品を日本の長寿文化との繋がりで選定——儀式・素材・作り手。4つの信頼できるパートナーストアから厳選。'}
+              ? 'Every item is selected for its connection to Japan\'s longevity culture — the ritual, the material, the maker. Curated from two trusted partner stores.'
+              : '全商品を日本の長寿文化との繋がりで選定——儀式・素材・作り手。2つの信頼できるパートナーストアから厳選。'}
           </p>
         </div>
       </div>
@@ -252,7 +164,7 @@ export default function CraftsPage() {
           <p className="font-sans text-[9px] tracking-[0.35em] uppercase mb-10" style={{ color: '#a8895a' }}>
             {isEn ? 'Partner Stores · Affiliate Programs' : 'パートナーストア · アフィリエイト'}
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: '#e8e0d0' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px" style={{ background: '#e8e0d0' }}>
             {STORES.map((store) => (
               <div key={store.key} style={{ background: '#faf8f4' }} className="p-7 flex flex-col">
                 <div className="flex items-start justify-between mb-5">
