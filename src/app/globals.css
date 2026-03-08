@@ -1,25 +1,34 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@300;400;500&family=Noto+Serif+JP:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@300;400;500&family=Noto+Serif+JP:wght@200;300;400&family=Shippori+Mincho+B1:wght@400;500;600;700&display=swap');
 
 :root {
-  --ink:        #1c1917;        /* 墨 — deep warm black */
-  --ash:        #3d3832;        /* 灰 — medium charcoal */
-  --stone:      #7a7065;        /* 石 — warm grey */
-  --sand:       #c4b49a;        /* 砂 — muted sand */
-  --washi:      #f5f0e8;        /* 和紙 — warm parchment */
-  --silk:       #faf8f4;        /* 絹 — almost white */
-  --gold:       #a8895a;        /* 金 — restrained gold */
-  --moss:       #5a7a5e;        /* 苔 — deep moss green */
-  --indigo:     #2e3f5c;        /* 藍 — deep indigo */
+  /* ── 大手町・銀座・盆栽 palette ── */
+  --lacquer:    #0c0b09;        /* 漆 — Ginza lacquer black */
+  --ink:        #1a1614;        /* 墨 — deep bark ink */
+  --bark:       #2e2822;        /* 幹 — bonsai trunk */
+  --bronze:     #7a5e3c;        /* 古銅 — aged bronze */
+  --ginza:      #b8904c;        /* 銀座金 — antique Ginza gold */
+  --platinum:   #a09080;        /* 白金 — Ginza platinum */
+  --pine:       #243c29;        /* 松 — deep Otemachi pine */
+  --moss:       #3d5a3a;        /* 苔 — forest moss */
+  --marble:     #ece7de;        /* 大理石 — cold Ginza marble */
+  --ivory:      #f4f0e8;        /* 象牙 — warm ivory */
+  --silk:       #faf8f4;        /* 絹 — pure white silk */
 
-  --font-serif: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
-  --font-sc:    'Cormorant SC', 'Cormorant Garamond', serif;
-  --font-sans:  -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  /* legacy aliases for compatibility */
+  --sand:       var(--platinum);
+  --gold:       var(--ginza);
+  --indigo:     #2e3f5c;
+
+  --font-serif:  'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+  --font-sc:     'Cormorant SC', 'Cormorant Garamond', serif;
+  --font-mincho: 'Shippori Mincho B1', 'Noto Serif JP', serif;
+  --font-sans:   -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--silk);
-  --color-foreground: var(--ink);
+  --color-background: var(--lacquer);
+  --color-foreground: var(--ivory);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,8 +39,8 @@ html {
 }
 
 body {
-  background: var(--silk);
-  color: var(--ink);
+  background: var(--lacquer);
+  color: var(--ivory);
   font-family: var(--font-serif);
   font-weight: 300;
   line-height: 1.8;
@@ -40,25 +49,27 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* scrollbar — almost invisible */
+/* scrollbar — Ginza: barely visible, gold thumb */
 ::-webkit-scrollbar { width: 1px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--sand); }
+::-webkit-scrollbar-thumb { background: var(--ginza); }
 
 /* selection */
-::selection { background: var(--ink); color: var(--silk); }
+::selection { background: var(--ginza); color: var(--lacquer); }
 
 /* utility classes */
-.font-serif { font-family: var(--font-serif); }
-.font-sc    { font-family: var(--font-sc); }
-.font-sans  { font-family: var(--font-sans); }
+.font-serif  { font-family: var(--font-serif); }
+.font-sc     { font-family: var(--font-sc); }
+.font-mincho { font-family: var(--font-mincho); }
+.font-sans   { font-family: var(--font-sans); }
 
-/* Zen divider — thin horizontal rule */
+/* Ginza rule — hair-thin gold horizontal rule */
 .zen-rule {
   display: block;
   width: 40px;
   height: 1px;
-  background: var(--sand);
+  background: var(--ginza);
+  opacity: 0.4;
   margin: 0 auto;
 }
 
@@ -69,10 +80,11 @@ body {
 }
 .fade-up { animation: fadeUp 0.9s ease both; }
 
-/* brush stroke separator */
+/* lacquer brush stroke separator */
 .brush-stroke {
   display: inline-block;
   width: 1px;
   height: 60px;
-  background: linear-gradient(to bottom, transparent, var(--sand), transparent);
+  background: linear-gradient(to bottom, transparent, var(--ginza), transparent);
+  opacity: 0.4;
 }

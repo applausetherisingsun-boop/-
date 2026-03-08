@@ -26,7 +26,7 @@ export default function Navigation() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
         isScrolled
-          ? 'bg-[#faf8f4]/96 backdrop-blur-sm border-b border-[#c4b49a]/20'
+          ? 'bg-[#0c0b09]/96 backdrop-blur-sm border-b border-[#2e2822]/60'
           : 'bg-transparent'
       }`}
     >
@@ -34,17 +34,17 @@ export default function Navigation() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-4 group">
-          <div className="w-8 h-8 border border-[#a8895a]/40 flex items-center justify-center">
-            <span className="text-[#a8895a] font-serif text-sm font-light">白</span>
+          <div className="w-8 h-8 border border-[#b8904c]/35 flex items-center justify-center">
+            <span className="text-[#b8904c] font-sans text-sm" style={{ fontFamily: "'Shippori Mincho B1', serif", fontWeight: 500 }}>白</span>
           </div>
           <div className="flex flex-col leading-none">
             <span
-              className="text-[#1c1917] text-base tracking-[0.25em] font-sans font-light"
+              className="text-[#f4f0e8] text-base tracking-[0.25em] font-sans font-light"
               style={{ letterSpacing: '0.25em' }}
             >
               SHIROKUMA
             </span>
-            <span className="text-[#a8895a] text-[8px] tracking-[0.4em] uppercase font-sans font-light mt-0.5">
+            <span className="text-[#b8904c] text-[8px] tracking-[0.4em] uppercase font-sans font-light mt-0.5">
               {lang === 'en' ? 'Longevity · Japan' : '長寿科学 · 日本'}
             </span>
           </div>
@@ -56,7 +56,7 @@ export default function Navigation() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-[#7a7065] text-xs font-sans tracking-[0.2em] uppercase hover:text-[#1c1917] transition-colors duration-300"
+              className="text-[#a09080] text-xs font-sans tracking-[0.2em] uppercase hover:text-[#f4f0e8] transition-colors duration-300"
             >
               {lang === 'en' ? link.en : link.ja}
             </Link>
@@ -67,16 +67,16 @@ export default function Navigation() {
             <button
               onClick={() => setLang('en')}
               className={`transition-colors duration-300 ${
-                lang === 'en' ? 'text-[#1c1917]' : 'text-[#c4b49a] hover:text-[#7a7065]'
+                lang === 'en' ? 'text-[#f4f0e8]' : 'text-[#5a4e42] hover:text-[#a09080]'
               }`}
             >
               EN
             </button>
-            <span className="text-[#c4b49a]">·</span>
+            <span className="text-[#2e2822]">·</span>
             <button
               onClick={() => setLang('ja')}
               className={`transition-colors duration-300 ${
-                lang === 'ja' ? 'text-[#1c1917]' : 'text-[#c4b49a] hover:text-[#7a7065]'
+                lang === 'ja' ? 'text-[#f4f0e8]' : 'text-[#5a4e42] hover:text-[#a09080]'
               }`}
             >
               JP
@@ -85,7 +85,7 @@ export default function Navigation() {
 
           <Link
             href="/diagnosis"
-            className="border border-[#1c1917]/30 text-[#1c1917] px-6 py-2 text-[10px] font-sans tracking-[0.2em] uppercase hover:bg-[#1c1917] hover:text-[#faf8f4] transition-all duration-500"
+            className="border border-[#b8904c]/35 text-[#b8904c] px-6 py-2 text-[10px] font-sans tracking-[0.2em] uppercase hover:bg-[#b8904c] hover:text-[#0c0b09] hover:border-[#b8904c] transition-all duration-500"
           >
             {lang === 'en' ? 'Begin' : '始める'}
           </Link>
@@ -96,17 +96,17 @@ export default function Navigation() {
           <div className="flex items-center gap-2 text-[10px] font-sans tracking-widest">
             <button
               onClick={() => setLang('en')}
-              className={lang === 'en' ? 'text-[#1c1917]' : 'text-[#c4b49a]'}
+              className={lang === 'en' ? 'text-[#f4f0e8]' : 'text-[#5a4e42]'}
             >EN</button>
-            <span className="text-[#c4b49a]">·</span>
+            <span className="text-[#2e2822]">·</span>
             <button
               onClick={() => setLang('ja')}
-              className={lang === 'ja' ? 'text-[#1c1917]' : 'text-[#c4b49a]'}
+              className={lang === 'ja' ? 'text-[#f4f0e8]' : 'text-[#5a4e42]'}
             >JP</button>
           </div>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-[#1c1917] text-[10px] font-sans tracking-widest uppercase"
+            className="text-[#a09080] text-[10px] font-sans tracking-widest uppercase hover:text-[#f4f0e8] transition-colors"
           >
             {isOpen ? 'Close' : 'Menu'}
           </button>
@@ -115,12 +115,12 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#faf8f4] border-t border-[#c4b49a]/20 px-8 py-10 flex flex-col gap-6">
+        <div className="md:hidden bg-[#0c0b09] border-t border-[#2e2822]/60 px-8 py-10 flex flex-col gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-[#7a7065] text-xs font-sans tracking-[0.25em] uppercase hover:text-[#1c1917] transition-colors py-2 border-b border-[#c4b49a]/15"
+              className="text-[#a09080] text-xs font-sans tracking-[0.25em] uppercase hover:text-[#f4f0e8] transition-colors py-2 border-b border-[#2e2822]/40"
               onClick={() => setIsOpen(false)}
             >
               {lang === 'en' ? link.en : link.ja}
@@ -128,7 +128,7 @@ export default function Navigation() {
           ))}
           <Link
             href="/diagnosis"
-            className="border border-[#1c1917]/30 text-[#1c1917] px-6 py-3 text-[10px] font-sans tracking-[0.2em] uppercase text-center mt-4 hover:bg-[#1c1917] hover:text-[#faf8f4] transition-all duration-500"
+            className="border border-[#b8904c]/35 text-[#b8904c] px-6 py-3 text-[10px] font-sans tracking-[0.2em] uppercase text-center mt-4 hover:bg-[#b8904c] hover:text-[#0c0b09] transition-all duration-500"
             onClick={() => setIsOpen(false)}
           >
             {lang === 'en' ? 'Begin Free Diagnosis' : '無料診断を始める'}
