@@ -1,0 +1,12 @@
+[build]
+  command   = "npm run build"
+  publish   = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA-style 404 fallback (Next.js static export handles its own 404.html)
+[[redirects]]
+  from   = "/*"
+  to     = "/404.html"
+  status = 404
