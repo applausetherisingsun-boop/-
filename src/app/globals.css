@@ -1,84 +1,78 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@300;400;500&family=Noto+Serif+JP:wght@200;300;400&display=swap');
 
 :root {
-  --background: #fafaf8;
-  --foreground: #1a1a18;
-  --accent-gold: #c9a96e;
-  --accent-sage: #7a9e7e;
-  --accent-indigo: #3d5a80;
-  --accent-warm: #e8d5b7;
+  --ink:        #1c1917;        /* 墨 — deep warm black */
+  --ash:        #3d3832;        /* 灰 — medium charcoal */
+  --stone:      #7a7065;        /* 石 — warm grey */
+  --sand:       #c4b49a;        /* 砂 — muted sand */
+  --washi:      #f5f0e8;        /* 和紙 — warm parchment */
+  --silk:       #faf8f4;        /* 絹 — almost white */
+  --gold:       #a8895a;        /* 金 — restrained gold */
+  --moss:       #5a7a5e;        /* 苔 — deep moss green */
+  --indigo:     #2e3f5c;        /* 藍 — deep indigo */
+
+  --font-serif: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+  --font-sc:    'Cormorant SC', 'Cormorant Garamond', serif;
+  --font-sans:  -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--silk);
+  --color-foreground: var(--ink);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   scroll-behavior: smooth;
+  font-size: 16px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--silk);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-weight: 300;
+  line-height: 1.8;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: #f0ede6;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--accent-gold);
-  border-radius: 2px;
+/* scrollbar — almost invisible */
+::-webkit-scrollbar { width: 1px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sand); }
+
+/* selection */
+::selection { background: var(--ink); color: var(--silk); }
+
+/* utility classes */
+.font-serif { font-family: var(--font-serif); }
+.font-sc    { font-family: var(--font-sc); }
+.font-sans  { font-family: var(--font-sans); }
+
+/* Zen divider — thin horizontal rule */
+.zen-rule {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--sand);
+  margin: 0 auto;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #c9a96e 0%, #7a9e7e 50%, #3d5a80 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-gold {
-  background: linear-gradient(135deg, #c9a96e 0%, #e8c98a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
+/* subtle fade-in for sections */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.fade-up { animation: fadeUp 0.9s ease both; }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+/* brush stroke separator */
+.brush-stroke {
+  display: inline-block;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--sand), transparent);
 }
-
-.animate-fade-up {
-  animation: fadeUp 0.6s ease-out forwards;
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-.delay-100 { animation-delay: 0.1s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-300 { animation-delay: 0.3s; }
-.delay-400 { animation-delay: 0.4s; }
-.delay-500 { animation-delay: 0.5s; }
