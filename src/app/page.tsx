@@ -3,64 +3,69 @@
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+// ── Palette ───────────────────────────────────────────────────────────────────
+const C = {
+  ink:      '#0e0a06',   // warm lacquer black — mahogany undertone
+  inkCard:  '#160f08',   // card on dark bg
+  inkBorder:'#2c1f12',   // border on dark bg
+  cream:    '#f5f0e8',   // refined ivory
+  creamAlt: '#ece4d6',   // slightly deeper cream
+  creamCard:'#e3d9ca',   // card on light bg
+  gold:     '#b8956a',   // richer warm gold
+  goldMid:  '#c9a87c',   // lighter gold
+  goldFaint:'#c9a87c26', // near-transparent gold
+  ember:    '#c07636',   // onsen amber — warm accent
+  stone:    '#7c6f62',   // body text
+  stoneMid: '#564c43',   // mid stone
+  fog:      '#c2b8ac',   // captions / sub-labels
+};
+
 const axes = [
-  {
-    id: 'inflammation', kanji: '炎', en: 'Inflammation', ja: '炎症',
+  { id: 'inflammation', kanji: '炎', en: 'Inflammation',    ja: '炎症',
     desc_en: 'Chronic low-grade inflammation — the silent engine of biological aging. Japanese washoku and fermented foods naturally suppress NF-κB pathways.',
     desc_ja: '慢性的な低グレード炎症——老化の沈黙のエンジン。和食と発酵食品はNF-κBシグナルを静かに鎮める。',
-    science: 'Anti-inflammatory diet · Intestinal barrier · CRP',
-  },
-  {
-    id: 'gut', kanji: '腸', en: 'Gut Microbiome', ja: '腸内環境',
+    science: 'Anti-inflammatory diet · Intestinal barrier · CRP' },
+  { id: 'gut', kanji: '腸', en: 'Gut Microbiome',          ja: '腸内環境',
     desc_en: "Japan's fermentation heritage — miso, natto, amazake — seeds the gut with longevity-associated Bifidobacterium strains.",
     desc_ja: '日本の発酵文化——味噌、納豆、甘酒——は腸内に長寿と関連するビフィズス菌を定着させる。',
-    science: 'Microbiome diversity · SCFA · Leaky gut',
-  },
-  {
-    id: 'neural', kanji: '心', en: 'Neural · Stress', ja: '神経・ストレス',
+    science: 'Microbiome diversity · SCFA · Leaky gut' },
+  { id: 'neural', kanji: '心', en: 'Neural · Stress',      ja: '神経・ストレス',
     desc_en: 'HPA axis dysregulation accelerates telomere shortening. Zen meditation and shinrin-yoku restore the parasympathetic state.',
     desc_ja: 'HPA軸の乱れはテロメア短縮を加速する。禅と森林浴は副交感神経を静かに回復させる。',
-    science: 'Cortisol · HPA axis · Neuroplasticity',
-  },
-  {
-    id: 'metabolic', kanji: '氣', en: 'Metabolic', ja: '代謝',
+    science: 'Cortisol · HPA axis · Neuroplasticity' },
+  { id: 'metabolic', kanji: '氣', en: 'Metabolic',          ja: '代謝',
     desc_en: 'Mitochondrial biogenesis through thermal stress and movement. Hara hachi bu — eating to 80% — activates mTOR suppression naturally.',
     desc_ja: '温熱刺激と運動によるミトコンドリア新生。腹八分目はmTOR抑制を自然に引き起こす。',
-    science: 'Mitochondria · mTOR · Insulin sensitivity',
-  },
-  {
-    id: 'hormonal', kanji: '月', en: 'Hormonal · Sleep', ja: 'ホルモン・睡眠',
+    science: 'Mitochondria · mTOR · Insulin sensitivity' },
+  { id: 'hormonal', kanji: '月', en: 'Hormonal · Sleep',    ja: 'ホルモン・睡眠',
     desc_en: 'Circadian rhythm alignment orchestrates melatonin, growth hormone, and cortisol in perfect sequence.',
     desc_ja: '概日リズムの整合がメラトニン・成長ホルモン・コルチゾールを完璧な順序で指揮する。',
-    science: 'Circadian biology · Melatonin · Sleep architecture',
-  },
-  {
-    id: 'social', kanji: '縁', en: 'Social · Ikigai', ja: '社会・生きがい',
+    science: 'Circadian biology · Melatonin · Sleep architecture' },
+  { id: 'social', kanji: '縁', en: 'Social · Ikigai',       ja: '社会・生きがい',
     desc_en: 'Ikigai — reason for being — measurably correlates with longevity in Okinawan centenarians. Social bonds activate oxytocin pathways.',
     desc_ja: '「生きがい」は沖縄の百寿者の長寿と統計的に相関する。社会的絆はオキシトシン経路を活性化させる。',
-    science: 'Ikigai · Oxytocin · Community',
-  },
+    science: 'Ikigai · Oxytocin · Community' },
 ];
 
 const wisdom = [
-  { kanji: '食', title_en: 'Washoku', title_ja: '和食', sub_en: 'Japanese diet', sub_ja: '日本食',
+  { kanji: '食', title_en: 'Washoku',     title_ja: '和食',   sub_en: 'Japanese diet',       sub_ja: '日本食',
     desc_en: 'Naturally anti-inflammatory. Rich in polyphenols, omega-3s, and fermented foods. Associated with lower IL-6 and CRP markers.',
     desc_ja: '自然な抗炎症作用。ポリフェノール・オメガ3・発酵食品が豊富で、IL-6とCRP低下と相関。' },
-  { kanji: '森', title_en: 'Shinrin-yoku', title_ja: '森林浴', sub_en: 'Forest bathing', sub_ja: '森林浴',
+  { kanji: '森', title_en: 'Shinrin-yoku', title_ja: '森林浴', sub_en: 'Forest bathing',       sub_ja: '森林浴',
     desc_en: 'Clinically shown to lower cortisol, elevate NK cell activity, and reduce sympathetic nervous system activation.',
     desc_ja: 'コルチゾール低下・NK細胞活性上昇・交感神経抑制を臨床的に証明済み。' },
-  { kanji: '湯', title_en: 'Onsen', title_ja: '温泉', sub_en: 'Hot spring therapy', sub_ja: '温泉療法',
+  { kanji: '湯', title_en: 'Onsen',        title_ja: '温泉',   sub_en: 'Hot spring therapy',  sub_ja: '温泉療法',
     desc_en: 'Thermal stress activates heat shock proteins (HSP70), promotes mitochondrial biogenesis, improves insulin sensitivity.',
     desc_ja: '熱ストレスがHSP70を活性化し、ミトコンドリア新生を促進、インスリン感受性を改善する。' },
-  { kanji: '禅', title_en: 'Zen', title_ja: '禅', sub_en: 'Meditation', sub_ja: '瞑想',
+  { kanji: '禅', title_en: 'Zen',          title_ja: '禅',     sub_en: 'Meditation',          sub_ja: '瞑想',
     desc_en: 'Reduces cortisol, lengthens telomeres, activates BDNF, and rewires the prefrontal cortex for stress resilience.',
     desc_ja: 'コルチゾール低下・テロメア延長・BDNF活性化・ストレス耐性のための前頭前皮質再配線。' },
 ];
 
 const products = [
-  { kanji: '豆', name_en: 'Natto Starter Culture', name_ja: '納豆スターターカルチャー', origin: 'Ibaraki Prefecture', axes_en: ['Gut', 'Inflammation'], axes_ja: ['腸内', '炎症'], price: '$34', score: 94 },
-  { kanji: '茶', name_en: 'Ceremonial Matcha Reserve', name_ja: '抹茶（宇治産・最高級）', origin: 'Uji, Kyoto', axes_en: ['Neural', 'Metabolic'], axes_ja: ['神経', '代謝'], price: '$58', score: 91 },
-  { kanji: '木', name_en: 'Hinoki Bath Salt Blend', name_ja: '檜風呂塩ブレンド', origin: 'Kiso Valley, Nagano', axes_en: ['Metabolic', 'Neural'], axes_ja: ['代謝', '神経'], price: '$42', score: 88 },
+  { kanji: '豆', name_en: 'Natto Starter Culture',   name_ja: '納豆スターターカルチャー', origin: 'Ibaraki Prefecture', axes_en: ['Gut', 'Inflammation'], axes_ja: ['腸内', '炎症'], price: '$34', score: 94 },
+  { kanji: '茶', name_en: 'Ceremonial Matcha Reserve',name_ja: '抹茶（宇治産・最高級）',    origin: 'Uji, Kyoto',         axes_en: ['Neural', 'Metabolic'], axes_ja: ['神経', '代謝'], price: '$58', score: 91 },
+  { kanji: '木', name_en: 'Hinoki Bath Salt Blend',   name_ja: '檜風呂塩ブレンド',          origin: 'Kiso Valley, Nagano',axes_en: ['Metabolic', 'Neural'], axes_ja: ['代謝', '神経'], price: '$42', score: 88 },
 ];
 
 export default function HomePage() {
@@ -68,55 +73,66 @@ export default function HomePage() {
   const isEn = lang === 'en';
 
   return (
-    <div className="min-h-screen" style={{ background: '#faf8f4', color: '#1c1917' }}>
+    <div className="min-h-screen" style={{ background: C.cream, color: C.ink }}>
 
-      {/* ── HERO ── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-8" style={{ background: '#faf8f4' }}>
+      {/* ══════════════════════════════════════════════════════
+          HERO
+      ══════════════════════════════════════════════════════ */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-8 overflow-hidden"
+        style={{ background: `radial-gradient(ellipse 120% 80% at 50% 100%, #e8d9c0 0%, ${C.cream} 55%)` }}>
 
-        {/* subtle grid texture */}
-        <div className="absolute inset-0 opacity-[0.025]" style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, #1c1917 0px, #1c1917 1px, transparent 1px, transparent 80px), repeating-linear-gradient(90deg, #1c1917 0px, #1c1917 1px, transparent 1px, transparent 80px)'
-        }}></div>
+        {/* Warm floor glow — like onsen lamplight from below */}
+        <div className="absolute bottom-0 left-0 right-0 h-1/3 pointer-events-none"
+          style={{ background: `linear-gradient(to top, ${C.ember}08, transparent)` }} />
 
-        {/* vertical accent lines */}
-        <div className="absolute top-0 left-16 w-px h-full bg-gradient-to-b from-transparent via-[#c4b49a]/20 to-transparent hidden lg:block"></div>
-        <div className="absolute top-0 right-16 w-px h-full bg-gradient-to-b from-transparent via-[#c4b49a]/20 to-transparent hidden lg:block"></div>
+        {/* Watermark kanji — 寿 */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+          <span className="font-serif font-light"
+            style={{ fontSize: 'clamp(280px, 45vw, 560px)', color: `${C.gold}0b`, lineHeight: 1, letterSpacing: '-0.05em' }}>
+            寿
+          </span>
+        </div>
+
+        {/* Left / Right thin gold rules */}
+        <div className="absolute top-0 left-16 w-px h-full hidden lg:block"
+          style={{ background: `linear-gradient(to bottom, transparent, ${C.gold}35 30%, ${C.gold}35 70%, transparent)` }} />
+        <div className="absolute top-0 right-16 w-px h-full hidden lg:block"
+          style={{ background: `linear-gradient(to bottom, transparent, ${C.gold}35 30%, ${C.gold}35 70%, transparent)` }} />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto pt-40 pb-32">
 
           {/* eyebrow */}
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="w-12 h-px bg-[#c4b49a]/50"></div>
-            <span className="text-[#a8895a] text-[9px] font-sans tracking-[0.45em] uppercase font-light">
+          <div className="flex items-center justify-center gap-5 mb-14">
+            <div className="h-px w-16" style={{ background: `linear-gradient(to right, transparent, ${C.gold})` }} />
+            <span className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
               {isEn ? 'Japan · Evidence-Based · Global' : '日本発 · 科学的根拠 · 世界へ'}
             </span>
-            <div className="w-12 h-px bg-[#c4b49a]/50"></div>
+            <div className="h-px w-16" style={{ background: `linear-gradient(to left, transparent, ${C.gold})` }} />
           </div>
 
-          {/* main headline */}
-          <h1 className="font-serif font-light leading-[1.05] mb-6" style={{ fontSize: 'clamp(3rem, 8vw, 7rem)', letterSpacing: '-0.01em' }}>
+          {/* headline */}
+          <h1 className="font-serif font-light leading-[1.0] mb-7"
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 8rem)', letterSpacing: '-0.02em', color: C.ink }}>
             {isEn ? (
-              <>
-                Aging is not<br />
-                <span className="italic" style={{ color: '#a8895a' }}>destiny.</span>
+              <>Aging is not<br />
+                <span className="italic" style={{ color: C.gold }}>destiny.</span>
               </>
             ) : (
-              <>
-                老化は<br />
-                <span className="italic" style={{ color: '#a8895a' }}>宿命ではない。</span>
+              <>老化は<br />
+                <span className="italic" style={{ color: C.gold }}>宿命ではない。</span>
               </>
             )}
           </h1>
 
-          <p className="font-serif italic text-xl md:text-2xl mb-3" style={{ color: '#7a7065' }}>
+          <p className="font-serif italic mb-3" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)', color: C.stone }}>
             {isEn ? "It's a civilizational disease." : 'これは文明病である。'}
           </p>
 
-          <p className="font-sans text-[11px] tracking-[0.4em] mb-16" style={{ color: '#c4b49a' }}>
+          <p className="font-sans text-[10px] tracking-[0.45em] mb-16" style={{ color: C.fog }}>
             {isEn ? '老化は「宿命」ではなく「文明病」である' : 'Aging is not destiny — it is a civilizational disease.'}
           </p>
 
-          <p className="font-serif font-light text-lg leading-relaxed max-w-xl mx-auto mb-16" style={{ color: '#7a7065' }}>
+          <p className="font-serif font-light text-lg leading-loose max-w-xl mx-auto mb-16" style={{ color: C.stone }}>
             {isEn
               ? "SHIROKUMA decodes Japan's longevity secrets — washoku, fermentation, onsen, zen — through inflammation science, microbiome research, and circadian biology."
               : 'SHIROKUMAは日本の長寿の秘密（和食・発酵・温泉・禅）を炎症科学・マイクロバイオーム・概日リズムの視点から解読する。'}
@@ -125,15 +141,15 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/diagnosis"
-              className="font-sans text-[11px] tracking-[0.25em] uppercase px-10 py-4 transition-all duration-500"
-              style={{ background: '#1c1917', color: '#faf8f4', letterSpacing: '0.25em' }}
+              className="font-sans text-[10px] tracking-[0.3em] uppercase px-12 py-4 transition-all duration-500 hover:opacity-80"
+              style={{ background: C.ink, color: C.cream }}
             >
               {isEn ? 'Begin Free Diagnosis' : '無料診断を始める'}
             </Link>
             <Link
               href="/science"
-              className="font-sans text-[11px] tracking-[0.25em] uppercase px-10 py-4 border transition-all duration-500 hover:bg-[#1c1917] hover:text-[#faf8f4]"
-              style={{ borderColor: '#c4b49a', color: '#7a7065' }}
+              className="font-sans text-[10px] tracking-[0.3em] uppercase px-12 py-4 border transition-all duration-500"
+              style={{ borderColor: `${C.gold}60`, color: C.stone }}
             >
               {isEn ? 'Explore the Science' : 'サイエンスを探る'}
             </Link>
@@ -142,73 +158,105 @@ export default function HomePage() {
 
         {/* scroll indicator */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-          <div className="w-px h-16 bg-gradient-to-b from-[#c4b49a]/60 to-transparent"></div>
-          <span className="font-sans text-[8px] tracking-[0.5em] uppercase" style={{ color: '#c4b49a' }}>Scroll</span>
+          <div className="w-px h-16" style={{ background: `linear-gradient(to bottom, ${C.gold}80, transparent)` }} />
+          <span className="font-sans text-[8px] tracking-[0.55em] uppercase" style={{ color: C.fog }}>Scroll</span>
         </div>
       </section>
 
-      {/* ── STATS ── */}
-      <section className="py-10 px-8 border-y" style={{ borderColor: '#e8e0d0', background: '#f5f0e8' }}>
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-0 divide-x divide-[#e8e0d0]">
+      {/* ══════════════════════════════════════════════════════
+          STATS — dark version for drama
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-14 px-8"
+        style={{ background: `linear-gradient(90deg, #160f07 0%, #0e0a06 50%, #160f07 100%)`,
+                 borderTop: `1px solid ${C.ember}30`, borderBottom: `1px solid ${C.ember}20` }}>
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-x" style={{ borderColor: C.inkBorder }}>
           {[
-            { value: '87', unit: isEn ? 'yrs' : '歳', label: isEn ? "Japan's avg. lifespan" : '日本人平均寿命', sub: isEn ? '世界最長寿国' : 'World\'s longest-lived' },
-            { value: '6',  unit: isEn ? 'axes' : '軸', label: isEn ? 'Diagnostic framework' : '診断フレームワーク', sub: isEn ? '科学的根拠' : 'Evidence-based' },
-            { value: '100+', unit: isEn ? 'papers' : '本', label: isEn ? 'Evidence base' : 'エビデンス基盤', sub: isEn ? 'Peer-reviewed' : '査読論文' },
-            { value: '1', unit: isEn ? 'platform' : '拠点', label: isEn ? 'Japan → World' : '日本発 → 世界', sub: isEn ? 'Globally accessible' : 'グローバル展開' },
+            { value: '87', unit: isEn ? 'yrs' : '歳',   label: isEn ? "Japan's avg. lifespan"  : '日本人平均寿命',    sub: isEn ? '世界最長寿国' : "World's longest-lived" },
+            { value: '6',  unit: isEn ? 'axes' : '軸',  label: isEn ? 'Diagnostic framework'   : '診断フレームワーク', sub: isEn ? '科学的根拠'   : 'Evidence-based' },
+            { value: '100+',unit: isEn ? 'papers':'本', label: isEn ? 'Evidence base'          : 'エビデンス基盤',     sub: isEn ? 'Peer-reviewed': '査読論文' },
+            { value: '1',  unit: isEn ? 'platform':'拠点',label: isEn ? 'Japan → World'        : '日本発 → 世界',     sub: isEn ? 'Globally accessible':'グローバル展開' },
           ].map((s) => (
-            <div key={s.label} className="text-center py-8 px-4">
-              <p className="font-serif font-light leading-none mb-2" style={{ fontSize: '2.5rem', color: '#1c1917' }}>
-                {s.value}<span className="text-lg ml-1" style={{ color: '#a8895a' }}>{s.unit}</span>
+            <div key={s.label} className="text-center py-10 px-4">
+              <p className="font-serif font-light leading-none mb-2" style={{ fontSize: '2.8rem', color: '#f0e6d4' }}>
+                {s.value}<span className="text-base ml-1" style={{ color: C.ember }}>{s.unit}</span>
               </p>
-              <p className="font-sans text-[10px] tracking-[0.15em] uppercase mb-1" style={{ color: '#7a7065' }}>{s.label}</p>
-              <p className="font-sans text-[9px]" style={{ color: '#c4b49a' }}>{s.sub}</p>
+              <p className="font-sans text-[10px] tracking-[0.18em] uppercase mb-1" style={{ color: C.stone }}>{s.label}</p>
+              <p className="font-sans text-[9px]" style={{ color: C.fog }}>{s.sub}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── PHILOSOPHY ── */}
-      <section className="py-36 px-8" style={{ background: '#1c1917' }}>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-24 items-center">
+      {/* ── Transition line ── */}
+      <div style={{ height: '1px', background: `linear-gradient(to right, ${C.ink}, ${C.ember}60 40%, ${C.ember}60 60%, ${C.ink})` }} />
+
+      {/* ══════════════════════════════════════════════════════
+          PHILOSOPHY
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-40 px-8 relative overflow-hidden"
+        style={{ background: `linear-gradient(160deg, ${C.ink} 0%, #180e07 100%)` }}>
+
+        {/* Warm ambient glow — top left, like shoji screen lantern */}
+        <div className="absolute top-0 left-0 w-96 h-96 pointer-events-none"
+          style={{ background: `radial-gradient(circle at 0% 0%, ${C.ember}10, transparent 70%)` }} />
+
+        {/* background kanji */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none select-none hidden lg:block"
+          style={{ fontSize: '28rem', color: `${C.gold}07`, lineHeight: 1, fontFamily: 'serif', fontWeight: 300 }}>
+          道
+        </div>
+
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-28 items-center relative z-10">
           <div>
-            <p className="font-sans text-[9px] tracking-[0.45em] uppercase mb-8" style={{ color: '#a8895a' }}>
-              {isEn ? 'The Philosophy' : '哲学'}
-            </p>
-            <h2 className="font-serif font-light leading-tight mb-8" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#faf8f4' }}>
+            {/* Eyebrow with long rule */}
+            <div className="flex items-center gap-4 mb-10">
+              <div className="w-8 h-px" style={{ background: C.gold }} />
+              <p className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
+                {isEn ? 'The Philosophy' : '哲学'}
+              </p>
+            </div>
+            <h2 className="font-serif font-light leading-[1.05] mb-10"
+              style={{ fontSize: 'clamp(2.2rem, 4.5vw, 4rem)', color: C.cream }}>
               {isEn ? (
-                <>Western science,<br />Eastern wisdom.<br /><span className="italic" style={{ color: '#a8895a' }}>Finally united.</span></>
+                <>Western science,<br />Eastern wisdom.<br />
+                  <span className="italic" style={{ color: C.gold }}>Finally united.</span>
+                </>
               ) : (
-                <>西洋の科学と<br />東洋の叡智。<br /><span className="italic" style={{ color: '#a8895a' }}>ついに融合。</span></>
+                <>西洋の科学と<br />東洋の叡智。<br />
+                  <span className="italic" style={{ color: C.gold }}>ついに融合。</span>
+                </>
               )}
             </h2>
-            <p className="font-serif font-light leading-relaxed mb-6 text-lg" style={{ color: '#7a7065' }}>
+            <p className="font-serif font-light leading-loose text-lg mb-6" style={{ color: C.stone }}>
               {isEn
                 ? "Peter Attia and Andrew Huberman have transformed how the West thinks about longevity. But they're missing something: Japan has been living this way for centuries."
                 : 'ピーター・アティアやアンドリュー・ヒューバーマンは西洋の長寿観を変えた。しかし彼らには欠けているものがある。日本は数百年にわたってこの生き方を実践してきた。'}
             </p>
-            <p className="font-serif font-light leading-relaxed text-lg" style={{ color: '#7a7065' }}>
+            <p className="font-serif font-light leading-loose text-lg" style={{ color: C.stone }}>
               {isEn
                 ? "Okinawan centenarians don't follow protocols. They eat fermented soybean. They walk to their fields. Their ikigai keeps them alive. SHIROKUMA translates this ancient operating system into evidence-based science."
                 : '沖縄の百寿者はプロトコルに従わない。発酵大豆を食べ、畑まで歩き、生きがいが彼らを生かし続ける。SHIROKUMAはこの古代のOSを科学的根拠に翻訳する。'}
             </p>
           </div>
 
-          <div className="space-y-0 divide-y" style={{ borderColor: '#3d3832' }}>
+          <div className="divide-y" style={{ borderColor: C.inkBorder }}>
             {wisdom.map((item) => (
-              <div key={item.kanji} className="flex gap-8 py-7 group">
-                <div className="flex-shrink-0 w-12 h-12 border flex items-center justify-center" style={{ borderColor: '#3d3832' }}>
-                  <span className="font-serif text-xl font-light" style={{ color: '#a8895a' }}>{item.kanji}</span>
+              <div key={item.kanji} className="flex gap-8 py-8">
+                {/* kanji box — larger, more prominent */}
+                <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center border"
+                  style={{ borderColor: `${C.gold}40`, background: `${C.gold}08` }}>
+                  <span className="font-serif text-2xl font-light" style={{ color: C.gold }}>{item.kanji}</span>
                 </div>
                 <div>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="font-serif text-lg font-light" style={{ color: '#faf8f4' }}>
+                  <div className="flex items-baseline gap-3 mb-2">
+                    <span className="font-serif text-xl font-light" style={{ color: C.cream }}>
                       {isEn ? item.title_en : item.title_ja}
                     </span>
-                    <span className="font-sans text-[9px] tracking-[0.2em] uppercase" style={{ color: '#4a4440' }}>
+                    <span className="font-sans text-[9px] tracking-[0.25em] uppercase" style={{ color: C.stoneMid }}>
                       {isEn ? item.sub_en : item.sub_ja}
                     </span>
                   </div>
-                  <p className="font-sans text-sm leading-relaxed" style={{ color: '#7a7065' }}>
+                  <p className="font-sans text-sm leading-relaxed" style={{ color: C.stone }}>
                     {isEn ? item.desc_en : item.desc_ja}
                   </p>
                 </div>
@@ -218,43 +266,60 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 6 AXES ── */}
-      <section className="py-36 px-8" style={{ background: '#faf8f4' }}>
+      {/* ══════════════════════════════════════════════════════
+          6 AXES
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-40 px-8" style={{ background: C.cream }}>
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <p className="font-sans text-[9px] tracking-[0.45em] uppercase mb-6" style={{ color: '#a8895a' }}>
-              {isEn ? 'The Framework' : 'フレームワーク'}
-            </p>
-            <h2 className="font-serif font-light leading-tight mb-6" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#1c1917' }}>
+
+          <div className="text-center mb-24">
+            <div className="flex items-center justify-center gap-5 mb-8">
+              <div className="h-px w-16" style={{ background: `linear-gradient(to right, transparent, ${C.gold}60)` }} />
+              <p className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
+                {isEn ? 'The Framework' : 'フレームワーク'}
+              </p>
+              <div className="h-px w-16" style={{ background: `linear-gradient(to left, transparent, ${C.gold}60)` }} />
+            </div>
+            <h2 className="font-serif font-light" style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: C.ink }}>
               {isEn ? '6 Axes of Longevity' : '長寿の六軸'}
             </h2>
-            <div className="w-8 h-px mx-auto" style={{ background: '#c4b49a' }}></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: '#e8e0d0' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: C.creamCard }}>
             {axes.map((axis) => (
-              <div key={axis.id} className="p-10 group hover:bg-[#f5f0e8] transition-colors duration-500" style={{ background: '#faf8f4' }}>
-                <div className="flex items-start justify-between mb-6">
-                  <span className="font-serif text-4xl font-light" style={{ color: '#e8e0d0' }}>{axis.kanji}</span>
+              <div key={axis.id} className="p-12 group transition-colors duration-700"
+                style={{ background: C.cream }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = C.creamAlt; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = C.cream; }}
+              >
+                {/* Large decorative kanji */}
+                <div className="mb-8">
+                  <span className="font-serif font-light transition-all duration-700"
+                    style={{ fontSize: '4rem', lineHeight: 1, color: `${C.gold}25`,
+                             display: 'block' }}>
+                    {axis.kanji}
+                  </span>
                 </div>
-                <h3 className="font-serif text-xl font-light mb-4" style={{ color: '#1c1917' }}>
+                <h3 className="font-serif font-light text-xl mb-5" style={{ color: C.ink }}>
                   {isEn ? axis.en : axis.ja}
                 </h3>
-                <p className="font-sans text-sm leading-relaxed mb-6" style={{ color: '#7a7065' }}>
+                <p className="font-sans text-sm leading-relaxed mb-6" style={{ color: C.stone }}>
                   {isEn ? axis.desc_en : axis.desc_ja}
                 </p>
-                <p className="font-sans text-[9px] tracking-[0.15em] uppercase" style={{ color: '#c4b49a' }}>
+                {/* thin gold rule */}
+                <div className="w-6 h-px mb-4" style={{ background: `${C.gold}60` }} />
+                <p className="font-sans text-[9px] tracking-[0.18em] uppercase" style={{ color: C.fog }}>
                   {axis.science}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-16">
+          <div className="text-center mt-20">
             <Link
               href="/diagnosis"
-              className="inline-block font-sans text-[11px] tracking-[0.25em] uppercase px-12 py-4 border transition-all duration-500 hover:bg-[#1c1917] hover:text-[#faf8f4] hover:border-[#1c1917]"
-              style={{ borderColor: '#c4b49a', color: '#7a7065' }}
+              className="inline-block font-sans text-[10px] tracking-[0.3em] uppercase px-14 py-4 border transition-all duration-500 hover:border-[#0d0b09] hover:bg-[#0d0b09] hover:text-[#f7f3ed]"
+              style={{ borderColor: `${C.gold}80`, color: C.stone }}
             >
               {isEn ? 'Diagnose All 6 Axes — Free' : '6軸を診断する — 無料'}
             </Link>
@@ -262,58 +327,71 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── AUTHOR ── */}
-      <section className="py-36 px-8" style={{ background: '#f5f0e8' }}>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+      {/* ══════════════════════════════════════════════════════
+          AUTHOR
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-40 px-8" style={{ background: C.creamAlt }}>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-24 items-center">
 
-          {/* portrait placeholder */}
+          {/* portrait — double-border luxury frame */}
           <div className="flex justify-center order-2 md:order-1">
-            <div className="relative w-64 h-80 border" style={{ borderColor: '#c4b49a' }}>
-              <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: '#ede8df' }}>
-                <span className="font-serif text-6xl font-light mb-4" style={{ color: '#c4b49a' }}>白</span>
-                <span className="font-sans text-[8px] tracking-[0.4em] uppercase" style={{ color: '#c4b49a' }}>SHIROKUMA</span>
+            <div className="relative">
+              {/* outer frame */}
+              <div className="w-68 p-1" style={{ border: `1px solid ${C.gold}50` }}>
+                {/* inner frame */}
+                <div className="w-64 h-80 relative flex flex-col items-center justify-center"
+                  style={{ background: `linear-gradient(160deg, ${C.creamCard} 0%, ${C.cream} 100%)`,
+                           border: `1px solid ${C.gold}25` }}>
+                  <span className="font-serif font-light mb-3" style={{ fontSize: '5rem', color: `${C.gold}60` }}>白</span>
+                  <div className="w-8 h-px mb-3" style={{ background: `${C.gold}50` }} />
+                  <span className="font-sans text-[8px] tracking-[0.5em] uppercase" style={{ color: C.fog }}>SHIROKUMA</span>
+                </div>
               </div>
               {/* badge */}
-              <div className="absolute -bottom-4 -right-4 px-4 py-3" style={{ background: '#1c1917' }}>
-                <p className="font-sans text-[8px] tracking-[0.3em] uppercase mb-0.5" style={{ color: '#a8895a' }}>
+              <div className="absolute -bottom-5 -right-5 px-5 py-3.5" style={{ background: C.ink }}>
+                <p className="font-sans text-[8px] tracking-[0.35em] uppercase mb-0.5" style={{ color: C.gold }}>
                   {isEn ? 'Active Physician' : '現役医師'}
                 </p>
-                <p className="font-serif text-sm font-light" style={{ color: '#faf8f4' }}>放射線科医</p>
+                <p className="font-serif text-sm font-light" style={{ color: C.cream }}>放射線科医</p>
               </div>
             </div>
           </div>
 
           <div className="order-1 md:order-2">
-            <p className="font-sans text-[9px] tracking-[0.45em] uppercase mb-8" style={{ color: '#a8895a' }}>
-              {isEn ? 'About the Author' : '著者について'}
-            </p>
-            <h2 className="font-serif font-light leading-tight mb-8" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', color: '#1c1917' }}>
+            <div className="flex items-center gap-4 mb-10">
+              <div className="w-8 h-px" style={{ background: C.gold }} />
+              <p className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
+                {isEn ? 'About the Author' : '著者について'}
+              </p>
+            </div>
+            <h2 className="font-serif font-light leading-[1.05] mb-10"
+              style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', color: C.ink }}>
               {isEn ? (
-                <>Written by a doctor<br /><span className="italic" style={{ color: '#a8895a' }}>who lives the science.</span></>
+                <>Written by a doctor<br /><span className="italic" style={{ color: C.gold }}>who lives the science.</span></>
               ) : (
-                <>科学を自ら実践する<br /><span className="italic" style={{ color: '#a8895a' }}>医師が書いた。</span></>
+                <>科学を自ら実践する<br /><span className="italic" style={{ color: C.gold }}>医師が書いた。</span></>
               )}
             </h2>
-            <p className="font-serif font-light leading-relaxed mb-5 text-lg" style={{ color: '#7a7065' }}>
+            <p className="font-serif font-light leading-loose text-lg mb-5" style={{ color: C.stone }}>
               {isEn
                 ? 'NISHI is a practicing radiologist and longevity researcher based in Japan. At 36, he maintains 9.7% body fat — not because of genetics, but through a meticulously science-tested protocol rooted in evolutionary medicine.'
                 : 'NISHIは日本を拠点とする現役放射線科医・長寿研究者。36歳で体脂肪率9.7%を維持するのは遺伝ではなく、進化医学に根ざした科学的プロトコルによる。'}
             </p>
-            <p className="font-serif font-light leading-relaxed mb-10 text-lg" style={{ color: '#7a7065' }}>
+            <p className="font-serif font-light leading-loose text-lg mb-12" style={{ color: C.stone }}>
               {isEn
                 ? "His mission: to be the first Japanese physician to scientifically decode why Japan is the world's longest-lived nation — and deliver that knowledge globally."
                 : '彼のミッション：なぜ日本が世界最長寿国なのかを科学的に解読し、その知識を世界に届ける最初の日本人医師になること。'}
             </p>
-            <div className="grid grid-cols-3 gap-0 divide-x" style={{ borderColor: '#c4b49a' }}>
+            <div className="grid grid-cols-3 divide-x" style={{ borderColor: `${C.gold}40` }}>
               {(isEn
                 ? [{ v: '36', u: 'yrs', l: 'Age · 9.7% body fat' }, { v: '5+', u: 'yrs', l: 'Training & research' }, { v: '100+', u: 'refs', l: 'Peer-reviewed' }]
                 : [{ v: '36', u: '歳', l: '体脂肪率9.7%' }, { v: '5+', u: '年', l: '実践・研究歴' }, { v: '100+', u: '本', l: '査読論文参照' }]
               ).map((s) => (
-                <div key={s.l} className="text-center px-4 py-3">
-                  <p className="font-serif font-light text-2xl" style={{ color: '#1c1917' }}>
-                    {s.v}<span className="text-sm ml-0.5" style={{ color: '#a8895a' }}>{s.u}</span>
+                <div key={s.l} className="text-center px-4 py-4">
+                  <p className="font-serif font-light text-2xl" style={{ color: C.ink }}>
+                    {s.v}<span className="text-sm ml-0.5" style={{ color: C.gold }}>{s.u}</span>
                   </p>
-                  <p className="font-sans text-[9px] tracking-[0.1em] mt-1" style={{ color: '#7a7065' }}>{s.l}</p>
+                  <p className="font-sans text-[9px] tracking-[0.1em] mt-1" style={{ color: C.stone }}>{s.l}</p>
                 </div>
               ))}
             </div>
@@ -321,59 +399,88 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── BOOK ── */}
-      <section className="py-36 px-8" style={{ background: '#1c1917' }}>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+      {/* ── Transition line ── */}
+      <div style={{ height: '1px', background: `linear-gradient(to right, ${C.creamAlt}, ${C.gold}50 40%, ${C.gold}50 60%, ${C.creamAlt})` }} />
 
-          {/* book visual */}
+      {/* ══════════════════════════════════════════════════════
+          BOOK
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-40 px-8 relative overflow-hidden"
+        style={{ background: `linear-gradient(160deg, #180e07 0%, ${C.ink} 100%)` }}>
+
+        {/* Warm ambient glow — bottom right */}
+        <div className="absolute bottom-0 right-0 w-96 h-96 pointer-events-none"
+          style={{ background: `radial-gradient(circle at 100% 100%, ${C.ember}0e, transparent 70%)` }} />
+
+        {/* bg kanji */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 pointer-events-none select-none hidden lg:block"
+          style={{ fontSize: '28rem', color: `${C.gold}06`, lineHeight: 1, fontFamily: 'serif', fontWeight: 300 }}>
+          書
+        </div>
+
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-24 items-center relative z-10">
+
+          {/* book mock — more refined */}
           <div className="flex justify-center">
             <div className="relative">
-              <div className="w-52 border-l-4 px-8 py-12 shadow-2xl" style={{ background: '#141210', borderLeftColor: '#a8895a' }}>
-                <span className="font-sans text-[7px] tracking-[0.4em] uppercase border px-2 py-1 block w-fit mb-8" style={{ color: '#a8895a', borderColor: '#a8895a30' }}>
-                  {isEn ? 'Coming 2026' : '2026年刊行'}
-                </span>
-                <h3 className="font-serif font-light text-xl leading-snug mb-3" style={{ color: '#faf8f4' }}>
-                  {isEn ? <>Aging Is a<br />Civilization<br />Disease</> : <>老化は<br />文明病である</>}
-                </h3>
-                <p className="font-sans text-[8px] tracking-[0.2em] mb-8" style={{ color: '#a8895a' }}>
-                  {isEn ? 'SHIROKUMA 6-Axis Guide' : 'SHIROKUMA 6軸完全ガイド'}
-                </p>
-                <div className="w-6 h-px mb-6" style={{ background: '#a8895a30' }}></div>
-                <p className="font-sans text-[7px] tracking-widest uppercase" style={{ color: '#4a4440' }}>NISHI · M.D.</p>
+              <div className="w-56 shadow-2xl" style={{ borderLeft: `5px solid ${C.gold}`, background: C.inkCard }}>
+                <div className="px-9 py-14">
+                  <span className="font-sans text-[7px] tracking-[0.45em] uppercase px-2 py-1 inline-block mb-10"
+                    style={{ color: C.gold, border: `1px solid ${C.gold}30` }}>
+                    {isEn ? 'Coming 2026' : '2026年刊行'}
+                  </span>
+                  <h3 className="font-serif font-light text-2xl leading-snug mb-3" style={{ color: C.cream }}>
+                    {isEn ? <>Aging Is a<br />Civilization<br />Disease</> : <>老化は<br />文明病である</>}
+                  </h3>
+                  <p className="font-sans text-[8px] tracking-[0.25em] mb-10" style={{ color: C.gold }}>
+                    {isEn ? 'SHIROKUMA 6-Axis Guide' : 'SHIROKUMA 6軸完全ガイド'}
+                  </p>
+                  <div className="w-8 h-px mb-8" style={{ background: `${C.gold}40` }} />
+                  <p className="font-sans text-[7px] tracking-widest uppercase" style={{ color: C.stoneMid }}>NISHI · M.D.</p>
+                </div>
               </div>
-              <div className="absolute -bottom-3 left-4 right-4 h-6 blur-md rounded-full" style={{ background: 'rgba(0,0,0,0.5)' }}></div>
+              <div className="absolute -bottom-4 left-6 right-6 h-8 blur-xl rounded-full opacity-60"
+                style={{ background: 'rgba(0,0,0,0.8)' }} />
             </div>
           </div>
 
           <div>
-            <p className="font-sans text-[9px] tracking-[0.45em] uppercase mb-8" style={{ color: '#a8895a' }}>
-              {isEn ? 'The Book' : '著書'}
-            </p>
-            <h2 className="font-serif font-light leading-tight mb-6" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', color: '#faf8f4' }}>
+            <div className="flex items-center gap-4 mb-10">
+              <div className="w-8 h-px" style={{ background: C.gold }} />
+              <p className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
+                {isEn ? 'The Book' : '著書'}
+              </p>
+            </div>
+            <h2 className="font-serif font-light leading-[1.05] mb-8"
+              style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', color: C.cream }}>
               {isEn
-                ? <>The manifesto for<br /><span className="italic" style={{ color: '#a8895a' }}>the anti-aging era.</span></>
-                : <>アンチエイジング時代の<br /><span className="italic" style={{ color: '#a8895a' }}>マニフェスト。</span></>}
+                ? <>The manifesto for<br /><span className="italic" style={{ color: C.gold }}>the anti-aging era.</span></>
+                : <>アンチエイジング時代の<br /><span className="italic" style={{ color: C.gold }}>マニフェスト。</span></>}
             </h2>
-            <p className="font-serif font-light text-lg leading-relaxed mb-10" style={{ color: '#7a7065' }}>
+            <p className="font-serif font-light text-lg leading-loose mb-10" style={{ color: C.stone }}>
               {isEn
                 ? '7 chapters. 6 axes. One complete protocol to live not like a salmon — but like a polar bear.'
                 : '7章構成。6つの軸。サーモンではなく、ホッキョクグマのように生きるための完全プロトコル。'}
             </p>
-            <div className="space-y-0 divide-y mb-10" style={{ borderColor: '#3d3832' }}>
+            <div className="divide-y mb-12" style={{ borderColor: C.inkBorder }}>
               {(isEn
                 ? ['Inflammaging — The Silent Engine', 'The Gut Microbiome Axis', 'Neural & Stress Regulation', 'Metabolic Axis & Mitochondria', 'Hormonal Axis & Circadian Biology', 'Social Axis & Ikigai', 'The Japanese Integration Protocol']
                 : ['炎症老化（Inflammaging）', '腸内マイクロバイオーム軸', '神経・ストレス調節', '代謝軸とミトコンドリア', 'ホルモン軸と概日リズム', '社会軸と生きがい', '日本式統合プロトコル']
               ).map((title, i) => (
-                <div key={i} className="flex items-center gap-4 py-3">
-                  <span className="font-sans text-[9px] w-5 flex-shrink-0" style={{ color: '#a8895a30' }}>0{i + 1}</span>
-                  <span className="font-serif font-light text-sm" style={{ color: '#7a7065' }}>{title}</span>
+                <div key={i} className="flex items-center gap-5 py-3.5">
+                  <span className="font-sans text-[9px] w-6 flex-shrink-0 tabular-nums" style={{ color: `${C.gold}40` }}>
+                    0{i + 1}
+                  </span>
+                  <span className="font-serif font-light text-sm" style={{ color: C.stone }}>{title}</span>
                 </div>
               ))}
             </div>
             <Link
               href="/science"
-              className="inline-block font-sans text-[11px] tracking-[0.25em] uppercase px-8 py-3.5 border transition-all duration-500 hover:bg-[#a8895a] hover:border-[#a8895a] hover:text-[#1c1917]"
-              style={{ borderColor: '#a8895a', color: '#a8895a' }}
+              className="inline-block font-sans text-[10px] tracking-[0.3em] uppercase px-10 py-4 border transition-all duration-500 hover:text-[#0d0b09]"
+              style={{ borderColor: `${C.gold}80`, color: C.gold }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = C.gold; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             >
               {isEn ? 'Preview the Science' : 'サイエンスを見る'}
             </Link>
@@ -381,51 +488,65 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── MARKETPLACE ── */}
-      <section className="py-36 px-8" style={{ background: '#f5f0e8' }}>
+      {/* ══════════════════════════════════════════════════════
+          MARKETPLACE
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-40 px-8" style={{ background: C.creamAlt }}>
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-20">
             <div>
-              <p className="font-sans text-[9px] tracking-[0.45em] uppercase mb-6" style={{ color: '#a8895a' }}>
-                {isEn ? 'Certified Marketplace' : '認定市場'}
-              </p>
-              <h2 className="font-serif font-light leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', color: '#1c1917' }}>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-8 h-px" style={{ background: C.gold }} />
+                <p className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
+                  {isEn ? 'Certified Marketplace' : '認定市場'}
+                </p>
+              </div>
+              <h2 className="font-serif font-light" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: C.ink }}>
                 {isEn ? <>Products backed<br />by the 6 axes.</> : <>六軸に基づいた<br />認定商品。</>}
               </h2>
             </div>
-            <Link href="/marketplace" className="font-sans text-[10px] tracking-[0.25em] uppercase mt-6 md:mt-0 pb-0.5 border-b transition-colors" style={{ color: '#a8895a', borderColor: '#a8895a' }}>
+            <Link href="/marketplace"
+              className="font-sans text-[10px] tracking-[0.3em] uppercase mt-8 md:mt-0 pb-px border-b transition-colors"
+              style={{ color: C.gold, borderColor: `${C.gold}60` }}>
               {isEn ? 'View all →' : '全商品 →'}
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background: '#ddd5c5' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background: C.creamCard }}>
             {products.map((p) => (
-              <div key={p.kanji} className="group" style={{ background: '#faf8f4' }}>
-                {/* image area */}
-                <div className="h-56 flex items-center justify-center border-b" style={{ background: '#ede8df', borderColor: '#ddd5c5' }}>
-                  <span className="font-serif text-6xl font-light" style={{ color: '#c4b49a' }}>{p.kanji}</span>
+              <div key={p.kanji} className="group" style={{ background: C.cream }}>
+                {/* product image area */}
+                <div className="h-60 flex items-center justify-center border-b relative overflow-hidden"
+                  style={{ background: `linear-gradient(160deg, ${C.creamCard} 0%, ${C.cream} 100%)`, borderColor: C.creamCard }}>
+                  <span className="font-serif font-light transition-all duration-700 group-hover:opacity-80"
+                    style={{ fontSize: '5.5rem', color: `${C.gold}50` }}>
+                    {p.kanji}
+                  </span>
                 </div>
                 <div className="p-8">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-serif font-light text-lg leading-tight" style={{ color: '#1c1917' }}>
+                    <h3 className="font-serif font-light text-lg leading-tight" style={{ color: C.ink }}>
                       {isEn ? p.name_en : p.name_ja}
                     </h3>
-                    <span className="font-serif font-light text-lg ml-4 flex-shrink-0" style={{ color: '#a8895a' }}>{p.price}</span>
+                    <span className="font-serif font-light text-lg ml-4 flex-shrink-0" style={{ color: C.gold }}>{p.price}</span>
                   </div>
-                  <p className="font-sans text-[9px] tracking-[0.2em] uppercase mb-4" style={{ color: '#c4b49a' }}>{p.origin}</p>
-                  <div className="flex gap-2 mb-4 flex-wrap">
+                  <p className="font-sans text-[9px] tracking-[0.2em] uppercase mb-4" style={{ color: C.fog }}>{p.origin}</p>
+                  <div className="flex gap-2 mb-5 flex-wrap">
                     {(isEn ? p.axes_en : p.axes_ja).map((a) => (
-                      <span key={a} className="font-sans text-[9px] tracking-[0.15em] uppercase px-3 py-1 border" style={{ borderColor: '#ddd5c5', color: '#7a7065' }}>{a}</span>
+                      <span key={a} className="font-sans text-[9px] tracking-[0.12em] uppercase px-3 py-1 border"
+                        style={{ borderColor: `${C.gold}40`, color: C.stone }}>{a}</span>
                     ))}
                   </div>
                   <div className="flex items-center justify-between mt-6">
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-px" style={{ background: '#e8e0d0' }}>
-                        <div className="h-full" style={{ width: `${p.score}%`, background: '#5a7a5e' }}></div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-20 h-px" style={{ background: C.creamCard }}>
+                        <div className="h-full" style={{ width: `${p.score}%`, background: '#5a7a5e' }} />
                       </div>
                       <span className="font-sans text-[9px]" style={{ color: '#5a7a5e' }}>{p.score}</span>
                     </div>
-                    <Link href="/marketplace" className="font-sans text-[9px] tracking-[0.2em] uppercase transition-colors" style={{ color: '#a8895a' }}>
+                    <Link href="/marketplace"
+                      className="font-sans text-[9px] tracking-[0.2em] uppercase transition-colors"
+                      style={{ color: C.gold }}>
                       {isEn ? 'View →' : '詳細 →'}
                     </Link>
                   </div>
@@ -436,28 +557,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── MEMBERSHIP ── */}
-      <section className="py-36 px-8" style={{ background: '#1c1917' }}>
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="font-sans text-[9px] tracking-[0.45em] uppercase mb-8" style={{ color: '#a8895a' }}>
-            {isEn ? 'CORE Membership' : 'COREメンバーシップ'}
-          </p>
-          <h2 className="font-serif font-light leading-tight mb-8" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#faf8f4' }}>
+      {/* ══════════════════════════════════════════════════════
+          MEMBERSHIP
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-40 px-8 relative overflow-hidden"
+        style={{ background: `radial-gradient(ellipse 80% 60% at 50% 50%, #1c1008 0%, ${C.ink} 100%)` }}>
+
+        {/* Warm center glow */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-1/2 h-1/2 rounded-full blur-3xl"
+            style={{ background: `${C.ember}08` }} />
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="flex items-center justify-center gap-5 mb-10">
+            <div className="h-px w-16" style={{ background: `linear-gradient(to right, transparent, ${C.gold}60)` }} />
+            <p className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
+              {isEn ? 'CORE Membership' : 'COREメンバーシップ'}
+            </p>
+            <div className="h-px w-16" style={{ background: `linear-gradient(to left, transparent, ${C.gold}60)` }} />
+          </div>
+          <h2 className="font-serif font-light leading-[1.05] mb-8"
+            style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: C.cream }}>
             {isEn
-              ? <>Go deeper.<br /><span className="italic" style={{ color: '#a8895a' }}>Stay ahead.</span></>
-              : <>さらに深く。<br /><span className="italic" style={{ color: '#a8895a' }}>最前線に居続ける。</span></>}
+              ? <>Go deeper.<br /><span className="italic" style={{ color: C.gold }}>Stay ahead.</span></>
+              : <>さらに深く。<br /><span className="italic" style={{ color: C.gold }}>最前線に居続ける。</span></>}
           </h2>
-          <p className="font-serif font-light text-lg leading-relaxed mb-16 max-w-xl mx-auto" style={{ color: '#7a7065' }}>
+          <p className="font-serif font-light text-lg leading-loose mb-20 max-w-xl mx-auto" style={{ color: C.stone }}>
             {isEn
               ? "Access peer-reviewed research digests, unlimited re-diagnostics, and personalized protocol updates — all filtered through Japan's longevity lens."
               : '査読論文ダイジェスト・無制限再診断・パーソナライズドプロトコル更新にアクセス。すべて日本の長寿レンズでフィルタリング。'}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px mb-16" style={{ background: '#3d3832' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px mb-20" style={{ background: C.inkBorder }}>
             {[
               {
                 tier: 'CORE', price: '¥1,980', period: isEn ? '/month' : '/月',
-                accent: '#a8895a',
+                accent: C.gold,
                 features: isEn
                   ? ['Monthly research digest (peer-reviewed)', 'Unlimited 6-axis re-diagnostics', 'Personalized recommendations', 'Community access']
                   : ['月次研究ダイジェスト（査読論文）', '6軸診断・無制限再診断', 'パーソナライズドレコメンド', 'コミュニティアクセス'],
@@ -465,35 +601,37 @@ export default function HomePage() {
               },
               {
                 tier: 'PRIME', price: '¥4,980', period: isEn ? '/month' : '/月',
-                accent: '#5a7a5e',
+                accent: '#6a8f6e',
                 features: isEn
                   ? ['Everything in CORE', 'Weekly research deep-dives', 'Direct Q&A with researchers', 'Early marketplace access', 'B2B certification pathway']
                   : ['COREの全機能', '週次研究深掘りレポート', '研究者との直接Q&A', 'マーケットプレイス先行アクセス', 'B2B認定パスウェイ'],
                 cta: isEn ? 'Join PRIME' : 'PRIMEに参加',
               },
             ].map((plan) => (
-              <div key={plan.tier} className="p-10 text-left" style={{ background: '#242220' }}>
-                <div className="flex justify-between items-start mb-8">
-                  <span className="font-sans text-[9px] tracking-[0.4em] uppercase" style={{ color: plan.accent }}>{plan.tier}</span>
+              <div key={plan.tier} className="p-12 text-left" style={{ background: C.inkCard }}>
+                <div className="flex justify-between items-start mb-10">
+                  <span className="font-sans text-[9px] tracking-[0.45em] uppercase" style={{ color: plan.accent }}>{plan.tier}</span>
                   <div className="text-right">
-                    <span className="font-serif font-light text-3xl" style={{ color: '#faf8f4' }}>{plan.price}</span>
-                    <span className="font-sans text-[10px] ml-1" style={{ color: '#4a4440' }}>{plan.period}</span>
+                    <span className="font-serif font-light text-3xl" style={{ color: C.cream }}>{plan.price}</span>
+                    <span className="font-sans text-[10px] ml-1.5" style={{ color: C.stoneMid }}>{plan.period}</span>
                   </div>
                 </div>
-                <ul className="space-y-3 mb-10">
+                {/* thin rule */}
+                <div className="w-full h-px mb-8" style={{ background: C.inkBorder }} />
+                <ul className="space-y-4 mb-12">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 font-sans text-sm" style={{ color: '#7a7065' }}>
-                      <span className="mt-1 flex-shrink-0 w-1 h-1 rounded-full inline-block" style={{ background: plan.accent }}></span>
+                    <li key={f} className="flex items-start gap-4 font-sans text-sm" style={{ color: C.stone }}>
+                      <span className="mt-[6px] flex-shrink-0 w-1 h-1 rounded-full" style={{ background: plan.accent }} />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/core"
-                  className="block w-full text-center py-3.5 font-sans text-[10px] tracking-[0.25em] uppercase border transition-all duration-500 hover:text-[#1c1917]"
-                  style={{ borderColor: plan.accent, color: plan.accent }}
-                  onMouseEnter={(e) => { (e.target as HTMLElement).style.background = plan.accent; }}
-                  onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'transparent'; }}
+                  className="block w-full text-center py-4 font-sans text-[10px] tracking-[0.3em] uppercase border transition-all duration-500"
+                  style={{ borderColor: `${plan.accent}60`, color: plan.accent }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = plan.accent; (e.currentTarget as HTMLElement).style.color = C.ink; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = plan.accent; }}
                 >
                   {plan.cta}
                 </Link>
@@ -503,31 +641,46 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FINAL CTA ── */}
-      <section className="py-36 px-8 text-center" style={{ background: '#faf8f4' }}>
-        <div className="max-w-2xl mx-auto">
-          <div className="w-px h-16 bg-gradient-to-b from-transparent via-[#c4b49a] to-transparent mx-auto mb-12"></div>
-          <h2 className="font-serif font-light leading-tight mb-6" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', color: '#1c1917' }}>
+      {/* ══════════════════════════════════════════════════════
+          FINAL CTA
+      ══════════════════════════════════════════════════════ */}
+      <section className="py-44 px-8 text-center relative overflow-hidden"
+        style={{ background: `radial-gradient(ellipse 100% 70% at 50% 80%, #e8d5ba 0%, ${C.cream} 55%)` }}>
+
+        {/* bg watermark */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+          <span className="font-serif font-light"
+            style={{ fontSize: 'clamp(200px, 35vw, 420px)', color: `${C.gold}08`, lineHeight: 1 }}>
+            問
+          </span>
+        </div>
+
+        <div className="max-w-2xl mx-auto relative z-10">
+          <div className="flex flex-col items-center gap-3 mb-14">
+            <div className="w-px h-20" style={{ background: `linear-gradient(to bottom, transparent, ${C.gold}80)` }} />
+          </div>
+          <h2 className="font-serif font-light leading-[1.05] mb-8"
+            style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', color: C.ink }}>
             {isEn
               ? <>Your longevity journey<br />starts with one question:</>
               : <>あなたの長寿の旅は<br />一つの問いから始まる：</>}
           </h2>
-          <p className="font-serif italic text-2xl mb-4" style={{ color: '#a8895a' }}>
+          <p className="font-serif italic mb-5" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)', color: C.gold }}>
             {isEn ? 'Where are you aging fastest?' : 'あなたが最も速く老化している場所はどこか？'}
           </p>
-          <p className="font-sans text-sm leading-relaxed mb-12" style={{ color: '#7a7065' }}>
+          <p className="font-sans text-sm leading-loose mb-14" style={{ color: C.stone }}>
             {isEn
               ? 'Our free 6-axis diagnosis reveals your biological weak points — and shows you the Japanese science to address them.'
               : '無料の6軸診断があなたの生物学的弱点を明らかにし、それに対処するための日本の科学を示す。'}
           </p>
           <Link
             href="/diagnosis"
-            className="inline-block font-sans text-[11px] tracking-[0.3em] uppercase px-14 py-5 transition-all duration-500 hover:bg-[#a8895a]"
-            style={{ background: '#1c1917', color: '#faf8f4' }}
+            className="inline-block font-sans text-[10px] tracking-[0.35em] uppercase px-16 py-5 transition-all duration-500 hover:opacity-80"
+            style={{ background: C.ink, color: C.cream }}
           >
             {isEn ? 'Begin Free Diagnosis' : '無料診断を始める'}
           </Link>
-          <p className="font-sans text-[9px] tracking-[0.2em] uppercase mt-6" style={{ color: '#c4b49a' }}>
+          <p className="font-sans text-[9px] tracking-[0.25em] uppercase mt-8" style={{ color: C.fog }}>
             {isEn ? '5 min · No signup · 25 questions' : '5分 · 登録不要 · 25問'}
           </p>
         </div>
