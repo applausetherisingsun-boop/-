@@ -76,43 +76,75 @@ export default function HomePage() {
     <div className="min-h-screen" style={{ background: C.cream, color: C.ink }}>
 
       {/* ══════════════════════════════════════════════════════
-          HERO
+          HERO — Dark Japanese garden atmosphere
+          Inspired by: Arima Onsen Kinzan / 京都 建仁寺庭園
+          Deep moss-black + amber lantern glow
       ══════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-8 overflow-hidden"
-        style={{ background: `radial-gradient(ellipse 120% 80% at 50% 100%, #e8d9c0 0%, ${C.cream} 55%)` }}>
+        style={{
+          background: `
+            radial-gradient(ellipse 70% 55% at 50% 95%, ${C.ember}22 0%, transparent 65%),
+            radial-gradient(ellipse 90% 50% at 15% 10%, #1e3a1a18 0%, transparent 55%),
+            radial-gradient(ellipse 60% 40% at 85% 20%, #152b1210 0%, transparent 45%),
+            linear-gradient(175deg, #0c1b0b 0%, #0f210d 30%, #0a1608 65%, #060d05 100%)
+          `
+        }}>
 
-        {/* Warm floor glow — like onsen lamplight from below */}
-        <div className="absolute bottom-0 left-0 right-0 h-1/3 pointer-events-none"
-          style={{ background: `linear-gradient(to top, ${C.ember}08, transparent)` }} />
+        {/* Shoji-screen grid overlay — very faint structural lines */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, #a8c89808 1px, transparent 1px),
+              linear-gradient(to bottom, #a8c89806 1px, transparent 1px)
+            `,
+            backgroundSize: '88px 88px',
+            opacity: 1,
+          }} />
+
+        {/* Moss vignette — dark edges like looking through a frame */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `
+              radial-gradient(ellipse 110% 100% at 50% 50%, transparent 40%, #020803aa 100%)
+            `
+          }} />
+
+        {/* Floor lantern glow — warm amber pooling at base */}
+        <div className="absolute bottom-0 left-0 right-0 h-2/5 pointer-events-none"
+          style={{ background: `linear-gradient(to top, ${C.ember}28 0%, ${C.ember}10 30%, transparent 100%)` }} />
+
+        {/* Side glow — left pillar light, like shoji backlight */}
+        <div className="absolute top-0 left-0 w-1/3 h-full pointer-events-none hidden lg:block"
+          style={{ background: `linear-gradient(to right, #c07636 0.5%, transparent 30%)`, opacity: 0.08 }} />
 
         {/* Watermark kanji — 寿 */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
           <span className="font-serif font-light"
-            style={{ fontSize: 'clamp(280px, 45vw, 560px)', color: `${C.gold}0b`, lineHeight: 1, letterSpacing: '-0.05em' }}>
+            style={{ fontSize: 'clamp(280px, 45vw, 560px)', color: `#ffffff05`, lineHeight: 1, letterSpacing: '-0.05em' }}>
             寿
           </span>
         </div>
 
         {/* Left / Right thin gold rules */}
         <div className="absolute top-0 left-16 w-px h-full hidden lg:block"
-          style={{ background: `linear-gradient(to bottom, transparent, ${C.gold}35 30%, ${C.gold}35 70%, transparent)` }} />
+          style={{ background: `linear-gradient(to bottom, transparent, ${C.gold}28 30%, ${C.gold}28 70%, transparent)` }} />
         <div className="absolute top-0 right-16 w-px h-full hidden lg:block"
-          style={{ background: `linear-gradient(to bottom, transparent, ${C.gold}35 30%, ${C.gold}35 70%, transparent)` }} />
+          style={{ background: `linear-gradient(to bottom, transparent, ${C.gold}28 30%, ${C.gold}28 70%, transparent)` }} />
 
         <div className="relative z-10 text-center max-w-4xl mx-auto pt-40 pb-32">
 
           {/* eyebrow */}
           <div className="flex items-center justify-center gap-5 mb-14">
-            <div className="h-px w-16" style={{ background: `linear-gradient(to right, transparent, ${C.gold})` }} />
+            <div className="h-px w-16" style={{ background: `linear-gradient(to right, transparent, ${C.gold}90)` }} />
             <span className="font-sans text-[9px] tracking-[0.5em] uppercase" style={{ color: C.gold }}>
               {isEn ? 'Japan · Evidence-Based · Global' : '日本発 · 科学的根拠 · 世界へ'}
             </span>
-            <div className="h-px w-16" style={{ background: `linear-gradient(to left, transparent, ${C.gold})` }} />
+            <div className="h-px w-16" style={{ background: `linear-gradient(to left, transparent, ${C.gold}90)` }} />
           </div>
 
           {/* headline */}
           <h1 className="font-serif font-light leading-[1.0] mb-7"
-            style={{ fontSize: 'clamp(3.2rem, 9vw, 8rem)', letterSpacing: '-0.02em', color: C.ink }}>
+            style={{ fontSize: 'clamp(3.2rem, 9vw, 8rem)', letterSpacing: '-0.02em', color: '#f0e8dc' }}>
             {isEn ? (
               <>Aging is not<br />
                 <span className="italic" style={{ color: C.gold }}>destiny.</span>
@@ -124,15 +156,15 @@ export default function HomePage() {
             )}
           </h1>
 
-          <p className="font-serif italic mb-3" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)', color: C.stone }}>
+          <p className="font-serif italic mb-3" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.6rem)', color: C.fog }}>
             {isEn ? "It's a civilizational disease." : 'これは文明病である。'}
           </p>
 
-          <p className="font-sans text-[10px] tracking-[0.45em] mb-16" style={{ color: C.fog }}>
+          <p className="font-sans text-[10px] tracking-[0.45em] mb-16" style={{ color: C.stoneMid }}>
             {isEn ? '老化は「宿命」ではなく「文明病」である' : 'Aging is not destiny — it is a civilizational disease.'}
           </p>
 
-          <p className="font-serif font-light text-lg leading-loose max-w-xl mx-auto mb-16" style={{ color: C.stone }}>
+          <p className="font-serif font-light text-lg leading-loose max-w-xl mx-auto mb-16" style={{ color: '#8a9e84' }}>
             {isEn
               ? "SHIROKUMA decodes Japan's longevity secrets — washoku, fermentation, onsen, zen — through inflammation science, microbiome research, and circadian biology."
               : 'SHIROKUMAは日本の長寿の秘密（和食・発酵・温泉・禅）を炎症科学・マイクロバイオーム・概日リズムの視点から解読する。'}
@@ -142,14 +174,14 @@ export default function HomePage() {
             <Link
               href="/diagnosis"
               className="font-sans text-[10px] tracking-[0.3em] uppercase px-12 py-4 transition-all duration-500 hover:opacity-80"
-              style={{ background: C.ink, color: C.cream }}
+              style={{ background: `${C.ember}cc`, color: '#f5ede0', backdropFilter: 'blur(4px)' }}
             >
               {isEn ? 'Begin Free Diagnosis' : '無料診断を始める'}
             </Link>
             <Link
               href="/science"
               className="font-sans text-[10px] tracking-[0.3em] uppercase px-12 py-4 border transition-all duration-500"
-              style={{ borderColor: `${C.gold}60`, color: C.stone }}
+              style={{ borderColor: `${C.gold}50`, color: C.fog, backdropFilter: 'blur(4px)' }}
             >
               {isEn ? 'Explore the Science' : 'サイエンスを探る'}
             </Link>
@@ -158,8 +190,8 @@ export default function HomePage() {
 
         {/* scroll indicator */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-          <div className="w-px h-16" style={{ background: `linear-gradient(to bottom, ${C.gold}80, transparent)` }} />
-          <span className="font-sans text-[8px] tracking-[0.55em] uppercase" style={{ color: C.fog }}>Scroll</span>
+          <div className="w-px h-16" style={{ background: `linear-gradient(to bottom, ${C.gold}70, transparent)` }} />
+          <span className="font-sans text-[8px] tracking-[0.55em] uppercase" style={{ color: C.stoneMid }}>Scroll</span>
         </div>
       </section>
 
@@ -269,7 +301,13 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════
           6 AXES
       ══════════════════════════════════════════════════════ */}
-      <section className="py-40 px-8" style={{ background: C.cream }}>
+      <section className="py-40 px-8 relative" style={{ background: C.cream }}>
+        {/* Washi paper grain overlay */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")`,
+            opacity: 1,
+          }} />
         <div className="max-w-6xl mx-auto">
 
           <div className="text-center mb-24">
@@ -330,7 +368,12 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════
           AUTHOR
       ══════════════════════════════════════════════════════ */}
-      <section className="py-40 px-8" style={{ background: C.creamAlt }}>
+      <section className="py-40 px-8 relative" style={{ background: C.creamAlt }}>
+        {/* Washi grain */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E")`,
+          }} />
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-24 items-center">
 
           {/* portrait — double-border luxury frame */}
@@ -646,6 +689,11 @@ export default function HomePage() {
       ══════════════════════════════════════════════════════ */}
       <section className="py-44 px-8 text-center relative overflow-hidden"
         style={{ background: `radial-gradient(ellipse 100% 70% at 50% 80%, #e8d5ba 0%, ${C.cream} 55%)` }}>
+        {/* Washi grain */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")`,
+          }} />
 
         {/* bg watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
